@@ -106,32 +106,58 @@ void FixedUpdate () {
     title_en: 'MoveWithKeyboard',
     code:
 `public float Speed = 2;
-  Rigidbody body;
+Rigidbody body;
 
-  void Start() {
-    body = GetComponent<Rigidbody> ();
-  }
+void Start() {
+  body = GetComponent<Rigidbody> ();
+}
 
-  void FixedUpdate () {
-    // check where we are moving
-    var moveX = Input.GetAxisRaw("Horizontal");
-    var moveZ = Input.GetAxisRaw("Vertical");
+void FixedUpdate () {
+  // check where we are moving
+  var moveX = Input.GetAxisRaw("Horizontal");
+  var moveZ = Input.GetAxisRaw("Vertical");
 
-    // compute horizontal velocity
-    var move = new Vector3 (moveX, 0, moveZ);
-    move.Normalize ();
-    move *= Speed;
+  // compute horizontal velocity
+  var move = new Vector3 (moveX, 0, moveZ);
+  move.Normalize ();
+  move *= Speed;
 
-    // keep vertical speed
-    move.y = body.velocity.y;
+  // keep vertical speed
+  move.y = body.velocity.y;
 
-    body.velocity = move;
-  }`
+  body.velocity = move;
+}`
   },
   {
-    title_en: '',
+    title_en: 'MoveWithKeyboard2',
     code:
-``
+`public float ForwardSpeed = 2;
+public float RotationSpeed = 180;
+Rigidbody body;
+
+void Start() {
+  body = GetComponent<Rigidbody> ();
+}
+
+void FixedUpdate () {
+  // check where we are moving
+  var rotation = Input.GetAxisRaw("Horizontal");
+  var forward = Input.GetAxisRaw("Vertical");
+
+  // rotate
+  transform.Rotate(Vector3.up, RotationSpeed * rotation * Time.fixedDeltaTime);
+
+  // compute forward velocity
+  var move = forward * transform.forward;
+  move.y = 0;
+  move.Normalize ();
+  move *= ForwardSpeed;
+
+  // keep vertical speed
+  move.y = body.velocity.y;
+
+  body.velocity = move;
+}`
   },
   {
     title_en: '',
