@@ -55,34 +55,78 @@ void Update () {
 }`
   },
   {
-    title_en: 'MoveYZ',
-    code: `
-public float SpeedY;
+    title_en: 'MoveHorizontalSimple1',
+    code: 
+`public float SpeedX;
 public float SpeedZ;
 
 void Update () {
-  transform.Translate (0, SpeedY, SpeedZ);
+  transform.Translate (SpeedX, 0, SpeedZ);
 }`
   },
   {
-    title_en: 'VelocityControl',
+    title_en: 'MoveHorizontalAccurate1',
     code:
-``
+`public float SpeedX;
+public float SpeedZ;
+
+void FixedUpdate () {
+  transform.Translate (SpeedX * Time.fixedDeltaTime, 0, SpeedZ * Time.fixedDeltaTime);
+}`
   },
   {
-    title_en: '',
+    title_en: 'MoveHorizontalSimple2',
     code:
-``
+`public float SpeedX, SpeedZ;
+Rigidbody body;
+
+void Start() {
+  body = GetComponent<Rigidbody> ();
+}
+
+void Update () {
+  body.velocity = new Vector3(SpeedX, body.velocity.y, SpeedZ);
+}`
   },
   {
-    title_en: '',
+    title_en: 'MoveHorizontalAccurate2',
     code:
-``
+`public float SpeedX, SpeedZ;
+Rigidbody body;
+
+void Start() {
+  body = GetComponent<Rigidbody> ();
+}
+
+void FixedUpdate () {
+  body.velocity = new Vector3(SpeedX, body.velocity.y, SpeedZ);
+}`
   },
   {
-    title_en: '',
+    title_en: 'MoveWithKeyboard',
     code:
-``
+`public float Speed = 2;
+  Rigidbody body;
+
+  void Start() {
+    body = GetComponent<Rigidbody> ();
+  }
+
+  void FixedUpdate () {
+    // check where we are moving
+    var moveX = Input.GetAxisRaw("Horizontal");
+    var moveZ = Input.GetAxisRaw("Vertical");
+
+    // compute horizontal velocity
+    var move = new Vector3 (moveX, 0, moveZ);
+    move.Normalize ();
+    move *= Speed;
+
+    // keep vertical speed
+    move.y = body.velocity.y;
+
+    body.velocity = move;
+  }`
   },
   {
     title_en: '',
