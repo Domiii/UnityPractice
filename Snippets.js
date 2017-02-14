@@ -188,6 +188,7 @@ void OnCollisionExit(Collision other) {
   },
   {
     title_en: 'Count 2D collisions',
+    name: 'CollisionCounter2D',
     code:
 `public int collisionCount; 
  
@@ -200,9 +201,24 @@ void OnCollisionExit2D(Collision2D other) {
 }`
   },
   {
-    title_en: '',
+    title_en: '2D keyboard movement + jumping',
+    refs: ['CollisionCounter2D'],
     code:
-``
+`public float speed = 3;
+public float jumpStrength = 9;
+public int colliderCount;
+ 
+void Update() {
+  var body = GetComponent<Rigidbody2D> ();
+  var v = body.velocity; 
+  v.x = Input.GetAxis ("Horizontal") * speed;
+ 
+  if (Input.GetKeyDown (KeyCode.Space) && colliderCount > 0) {
+    v.y = jumpStrength;
+  }
+ 
+  body.velocity = v;
+}`
   },
   {
     title_en: '',
