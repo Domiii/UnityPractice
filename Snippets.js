@@ -168,22 +168,22 @@ void FixedUpdate () {
     title_en: 'Test any 2D collisions',
     code:
 `void OnCollisionEnter2D(Collision2D other) {
-	print ("Enter: " + other.gameObject.name);
+  print ("Enter: " + other.gameObject.name);
 }
  
 void OnCollisionExit2D(Collision2D other) {
-	print ("Exit: " + other.gameObject.name);
+  print ("Exit: " + other.gameObject.name);
 }`
   },
   {
     title_en: 'Test any 3D collisions',
     code:
 `void OnCollisionEnter(Collision other) {
-	print ("Enter: " + other.gameObject.name);
+  print ("Enter: " + other.gameObject.name);
 }
  
 void OnCollisionExit(Collision other) {
-	print ("Exit: " + other.gameObject.name);
+  print ("Exit: " + other.gameObject.name);
 }`
   },
   {
@@ -193,11 +193,11 @@ void OnCollisionExit(Collision other) {
 `public int collisionCount; 
  
 void OnCollisionEnter2D(Collision2D other) {
-	++collisionCount;
+  ++collisionCount;
 }
  
 void OnCollisionExit2D(Collision2D other) {
-	--collisionCount;
+  --collisionCount;
 }`
   },
   {
@@ -221,44 +221,165 @@ void Update() {
 }`
   },
   {
-    title_en: '',
+    name: 'PlayerFeet2D',
     code:
-``
+`public Player player;
+ 
+void OnTriggerEnter2D(Collider2D collider) {
+  ++player.groundColliders;
+}
+ 
+void OnTriggerExit2D(Collider2D collider) {
+  --player.groundColliders;
+}`
   },
   {
-    title_en: '',
+    name: 'Complete2DKeyboardMovement',
+    refs: ['PlayerFeet2D']
+    note: 'You still need to add the code for counting the `groundColliders`.',
     code:
-``
+`public float speed = 3;
+public float jumpStrength = 9;
+public int groundColliders;
+ 
+void Update() {
+  var body = GetComponent<Rigidbody2D> ();
+  var v = body.velocity;
+ 
+  v.x = Input.GetAxis ("Horizontal") * speed;
+ 
+  if (Input.GetKeyDown (KeyCode.Space) && groundColliders > 0) {
+    v.y = jumpStrength;
+  }
+ 
+  body.velocity = v;
+ 
+  //  face current walking direction
+  if (v.x != 0) {
+    var scale = transform.localScale;
+    scale.x = Mathf.Sign (v.x) * Mathf.Abs(scale.x);
+    transform.localScale = scale;
+  }
+}`
   },
   {
-    title_en: '',
+    name: 'PlayerColliderTest2D',
+    title_en: 'Only do something when colliding with player',
     code:
-``
+`void OnTriggerEnter2D(Collider2D other) {
+  var player = other.gameObject.GetComponentInParent<Player>();
+  if (player != null) {
+    print (player.name);
+  }
+}`
   },
   {
-    title_en: '',
+    name: 'TimeTest',
     code:
-``
+`public class Test : MonoBehaviour {
+  public float secondsSinceStart;
+ 
+  void Update () {
+    secondsSinceStart += Time.deltaTime;
+  }
+}`
   },
   {
-    title_en: '',
+    title: 'CameraMoverX',
     code:
-``
+`public float xDirection;
+Player player;
+ 
+void OnTriggerEnter2D(Collider2D other) {
+  var triggerPlayer = other.gameObject.GetComponentInParent<Player> ();
+  if (triggerPlayer != null) {
+    player = triggerPlayer;
+  }
+}
+ 
+void OnTriggerExit2D(Collider2D other) {
+  var triggerPlayer = other.gameObject.GetComponentInParent<Player> ();
+  if (triggerPlayer != null) {
+    player = null;
+  }
+}
+ 
+void FixedUpdate() {
+  if (player != null) {
+    var xSpeed = xDirection * player.speed;
+    Camera.main.transform.Translate (xSpeed *  Time.fixedDeltaTime, 0, 0);
+  }
+}`
   },
   {
-    title_en: '',
+    title_en: 'SpeedPickup2D',
     code:
-``
+`public float speedFactor = 2;
+
+void OnTriggerEnter2D(Collider2D other) {
+  var triggerPlayer = other.GetComponentInParent<Player> ();
+  if (triggerPlayer != null) {
+    // player picked it up! 
+    triggerPlayer.speed *= speedFactor;
+    Destroy (gameObject);
+  }
+}`
   },
   {
-    title_en: '',
+    title_en: 'SlowTrap',
     code:
-``
+`public float speedFactor = 0.5f;
+
+void OnTriggerEnter2D(Collider2D other) {
+  var triggerPlayer = other.GetComponentInParent<Player> ();
+  if (triggerPlayer != null) {
+    // player entered!
+    triggerPlayer.speed *= speedFactor;
+  }
+}
+
+void OnTriggerExit2D(Collider2D other) {
+  var triggerPlayer = other.GetComponentInParent<Player> ();
+  if (triggerPlayer != null) {
+    // player exited!
+    triggerPlayer.speed /= speedFactor;
+  }
+}`
   },
   {
-    title_en: '',
+    name: 'DeathTrap',
     code:
-``
+`void OnTriggerEnter2D(Collider2D other) {
+  var triggerPlayer = other.GetComponentInParent<Player> ();
+  if (triggerPlayer != null) {
+    // player entered! (reset scene)
+    print("You lose! :(");
+    Scene scene = SceneManager.GetActiveScene(); 
+    SceneManager.LoadScene(scene.name);
+  }
+}
+`
+  },
+  {
+    title_en: 'Show note when player enters trigger',
+    code:
+`void OnTriggerEnter2D(Collider2D other) {
+  var triggerPlayer = other.GetComponentInParent<Player> ();
+  if (triggerPlayer != null) {
+    // player entered
+    player = triggerPlayer;
+    confirmNotice.SetActive (true);
+  }
+}
+ 
+void OnTriggerExit2D(Collider2D other) {
+  var triggerPlayer = other.GetComponentInParent<Player> ();
+  if (triggerPlayer != null) {
+    // player left
+    confirmNotice.SetActive (false);
+    player = null;
+  }
+}`
   },
   {
     title_en: '',
