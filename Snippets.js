@@ -159,6 +159,88 @@ void FixedUpdate () {
   body.velocity = move;
 }`
   },
+  
+  
+  
+  
+  
+  {
+    title_en: 'Test any 2D collisions',
+    code:
+`void OnCollisionEnter2D(Collision2D other) {
+	print ("Enter: " + other.gameObject.name);
+}
+ 
+void OnCollisionExit2D(Collision2D other) {
+	print ("Exit: " + other.gameObject.name);
+}`
+  },
+  {
+    title_en: 'Test any 3D collisions',
+    code:
+`void OnCollisionEnter(Collision other) {
+	print ("Enter: " + other.gameObject.name);
+}
+ 
+void OnCollisionExit(Collision other) {
+	print ("Exit: " + other.gameObject.name);
+}`
+  },
+  {
+    title_en: '',
+    code:
+``
+  },
+  {
+    title_en: '',
+    code:
+``
+  },
+  {
+    title_en: '',
+    code:
+``
+  },
+  {
+    title_en: '',
+    code:
+``
+  },
+  {
+    title_en: '',
+    code:
+``
+  },
+  {
+    title_en: '',
+    code:
+``
+  },
+  {
+    title_en: '',
+    code:
+``
+  },
+  {
+    title_en: '',
+    code:
+``
+  },
+  {
+    title_en: '',
+    code:
+``
+  },
+  {
+    title_en: '',
+    code:
+``
+  },
+  {
+    title_en: '',
+    code:
+``
+  },
   {
     title_en: '',
     code:
