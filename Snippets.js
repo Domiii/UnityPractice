@@ -187,9 +187,17 @@ void OnCollisionExit(Collision other) {
 }`
   },
   {
-    title_en: '',
+    title_en: 'Count 2D collisions',
     code:
-``
+`public int collisionCount; 
+ 
+void OnCollisionEnter2D(Collision2D other) {
+	++collisionCount;
+}
+ 
+void OnCollisionExit2D(Collision2D other) {
+	--collisionCount;
+}`
   },
   {
     title_en: '',
