@@ -382,9 +382,28 @@ void OnTriggerExit2D(Collider2D other) {
 }`
   },
   {
-    title_en: '',
+    name: 'RainMaker',
     code:
-``
+`public Rigidbody rainDrop;
+public float rainDropLifeTime = 2;
+Collider collider;
+
+void Start () {
+	collider = GetComponent<Collider> ();
+	collider.isTrigger = true;	// isTrigger = false makes no sense here
+}
+
+void Update () {
+	DropOne ();
+}
+
+void DropOne() {
+	var min = collider.bounds.min;
+	var max = collider.bounds.max;
+	var pos = new Vector3(Random.Range(min.x, max.x), Random.Range(min.y, max.y), Random.Range(min.z, max.z));
+	var drop = Instantiate (rainDrop, pos, Quaternion.identity);
+	Destroy (drop.gameObject, rainDropLifeTime);
+}`
   },
   {
     title_en: '',
