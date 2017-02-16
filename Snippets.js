@@ -382,9 +382,24 @@ void OnTriggerExit2D(Collider2D other) {
 }`
   },
   {
+    title_en: 'Shooter',
+    code:
+`public GameObject bulletPrefab;
+public Transform target;
+public float shootDelay = 0.5f;
+
+void Start () {
+  InvokeRepeating ("Shoot", shootDelay, shootDelay);
+}
+
+void Shoot() {
+  Instantiate (bulletPrefab, target.position, target.rotation);
+}`
+  },
+  {
     name: 'RainMaker',
     code:
-`public Rigidbody rainDrop;
+`public Rigidbody rainDropPrefab;
 public float rainDropLifeTime = 2;
 Collider collider;
 
@@ -401,14 +416,9 @@ void DropOne() {
 	var min = collider.bounds.min;
 	var max = collider.bounds.max;
 	var pos = new Vector3(Random.Range(min.x, max.x), Random.Range(min.y, max.y), Random.Range(min.z, max.z));
-	var drop = Instantiate (rainDrop, pos, Quaternion.identity);
+	var drop = Instantiate (rainDropPrefab, pos, Quaternion.identity);
 	Destroy (drop.gameObject, rainDropLifeTime);
 }`
-  },
-  {
-    title_en: '',
-    code:
-``
   },
   {
     title_en: '',
