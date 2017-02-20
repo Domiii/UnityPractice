@@ -467,9 +467,40 @@ void Explode() {
 }`
   },
   {
-    title_en: '',
+    title_en: 'WallSpawner',
     code:
-``
+`public int Nx = 10;
+public int Ny = 10;
+public float CubeSize = 0.5f;
+public Material[] Materials = new Material[0];
+private float Gap = 0.01f;
+
+void Start () {
+	if (transform.childCount == 0) {
+		CreateBricks ();
+	}
+}
+
+public void CreateBricks() {
+	for (var j = 0; j < Ny; ++j) {
+		var m = j % Materials.Length;
+		for (var i = 0; i < Nx; ++i) {
+			var cube = GameObject.CreatePrimitive (PrimitiveType.Cube);
+			cube.transform.SetParent(transform, false);
+			cube.transform.localScale = new Vector3(CubeSize, CubeSize, CubeSize);
+
+			var x = i * (CubeSize + Gap) + Gap;
+			var y = j * (CubeSize + Gap) + Gap;
+
+			cube.transform.localPosition = new Vector3 (x, y, 0);
+			cube.AddComponent<Rigidbody>();
+			cube.AddComponent<BoxCollider>();
+
+			cube.GetComponent<MeshRenderer> ().material = Materials[m];
+			m = (m + 1) % Materials.Length;
+		}
+	}
+}`
   },
   {
     title_en: '',
