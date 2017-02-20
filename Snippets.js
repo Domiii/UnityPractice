@@ -503,9 +503,23 @@ public void CreateBricks() {
 }`
   },
   {
-    title_en: '',
+    name: 'NoGravity',
     code:
-``
+`public Collider coll;
+void Start() {
+    coll = GetComponent<Collider>();
+    coll.isTrigger = true;
+}
+void OnTriggerEnter(Collider other) {
+    if (other.attachedRigidbody)
+        other.attachedRigidbody.useGravity = false;
+    
+}
+void OnTriggerExit(Collider other) {
+    if (other.attachedRigidbody)
+        other.attachedRigidbody.useGravity = true;
+    
+}`
   },
   {
     title_en: '',
