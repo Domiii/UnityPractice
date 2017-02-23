@@ -6,9 +6,7 @@
 
 * Scene refresh + Scene change
 * GameManager -> Score counting
-* Raining Objects
-* Shooting Stuff
-* Explosions
+* Playing with physical buttons
 
 ### UI
 
@@ -21,9 +19,13 @@
 ### Colliders, Meshes + Materials
 
 * Color.Lerp
-* Material.Lerp
 * Getting + working with a Collider programmatically
 * Working with bounding box
 * Getting + working with a Mesh programmatically
 * Modifying a mesh
 * Programmatic terrain
+
+
+### Bigger Experiments + Tutorials
+
+* How to do a rule-based AI?
