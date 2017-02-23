@@ -498,10 +498,40 @@ void OnTriggerExit(Collider other) {
 }`
   },
   {
-    name: '',
+    name: 'Sun',
     title_en: '',
+    note: 'Increase Y value of AxisOfRotation to reduce the angle, increase X to increase it.',
     code:
-``
+`/// <summary>
+/// Virtual time of day from 0 = 00:00 to 1 = 00:00 on the next day
+/// </summary>
+public float VirtualTimeOfDay;
+public float RealSecondsPerDay = 10;
+public Vector3 AxisOfRotation = new Vector3 (1, 1, 0);
+
+Quaternion startingRotation;
+
+void Start ()
+{
+  // get current time of day
+  var systemTimeOfDay = System.DateTime.Now.TimeOfDay;
+  VirtualTimeOfDay = (float)systemTimeOfDay.TotalDays;
+
+  startingRotation = transform.localRotation;
+  AxisOfRotation.Normalize (); // normalize axis
+}
+
+void Update ()
+{
+  // advance time of day
+  var timeDiff = Time.deltaTime;
+  var virtualTimeDiff = timeDiff / RealSecondsPerDay;
+  VirtualTimeOfDay += virtualTimeDiff;
+  VirtualTimeOfDay = Mathf.Repeat (VirtualTimeOfDay, 1);
+
+  // update rotation
+  transform.localRotation = Quaternion.AngleAxis (360 * VirtualTimeOfDay, AxisOfRotation);
+}`
   },
   {
     name: '',
