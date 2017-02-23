@@ -567,9 +567,149 @@ void Unequip() {
 }`
   },
   {
-    name: '',
-    title_en: '',
+    name: 'RollingCube',
+    title_en: 'Let a 1x1x1 sized cube roll!',
     code:
-``
+`public float speed = 2;
+
+public Transform left, right, forward, back, allRotators;
+
+
+Quaternion rollRotation = Quaternion.Euler(new Vector3 (0, 0, 90));
+float progress;
+Quaternion startRotatorRotation, endRotatorRotation;
+
+public bool IsRolling {
+  get { return transform.parent != null; }
+}
+
+void Reset () {
+  // create all rotators (make sure, their x-axis is pointing toward the center of the cube)
+  allRotators = new GameObject ("AllRotators").transform;
+  allRotators.position = transform.position;
+
+  left = CreateRotator ("Left", Vector3.left * 0.5f, Quaternion.identity);
+  right = CreateRotator ("Right", Vector3.right * 0.5f, Quaternion.Euler(new Vector3(0, 180, 0)));
+  back = CreateRotator ("Back", Vector3.back * 0.5f, Quaternion.Euler(new Vector3(0, 270, 0)));
+  forward = CreateRotator ("Forward", Vector3.forward * 0.5f, Quaternion.Euler(new Vector3(0, 90, 0)));
+}
+
+Transform CreateRotator(string name, Vector3 pos, Quaternion rotation) {
+  var go = new GameObject(name);
+  pos += Vector3.down * 0.5f;
+
+  var newTransform = go.transform;
+  newTransform.SetParent(transform);
+  newTransform.localPosition = pos;
+  newTransform.rotation = rotation;
+  newTransform.SetParent(allRotators);
+
+  return newTransform;
+}
+
+void FixedUpdate () {
+  if (!IsRolling) {
+    // not rolling -> We can start rolling
+    var horizontal = Input.GetAxis ("Horizontal");
+    var vertical = Input.GetAxis ("Vertical");
+    if (horizontal < 0) {
+      StartRoll (left);
+    }
+    else if (horizontal > 0) {
+      StartRoll (right);
+    }
+    else if (vertical < 0) {
+      StartRoll (back);
+    }
+    else if (vertical > 0) {
+      StartRoll (forward);
+    }
+  } else {
+    // keep on rolling!
+    UpdateRoll();
   }
+}
+
+
+void StartRoll(Transform rotator) {
+  // add cube to rotator
+  transform.SetParent (rotator);
+
+  // set start and end rotation
+  startRotatorRotation = rotator.rotation;
+  endRotatorRotation = rotator.rotation * rollRotation;
+}
+
+
+void UpdateRoll() {
+  // update progress (let progress go from 0 to 1 in 1/speed seconds)
+  progress = Mathf.Min(1, progress + speed * Time.deltaTime);
+
+  // interpolate rotation between start and end rotations
+  var progressTransform = transform.parent.transform;
+  progressTransform.rotation = Quaternion.Lerp(startRotatorRotation, endRotatorRotation, progress);
+
+  if (progress >= 1) {
+    // finished rolling
+    EndRoll();
+  }
+}
+
+
+void EndRoll() {
+  // move all rotators
+  allRotators.position = transform.position;
+
+  // reset progress & rotator's rotation
+  var rotator = transform.parent;
+  rotator.rotation = startRotatorRotation;
+  progress = 0;
+
+
+  // remove from parent
+  transform.SetParent (null);
+}`
+  },
+  {
+    name: '',
+	title_en: '',
+    code: 
+``
+  },
+  {
+    name: '',
+	title_en: '',
+    code: 
+``
+  },
+  {
+    name: '',
+	title_en: '',
+    code: 
+``
+  },
+  {
+    name: '',
+	title_en: '',
+    code: 
+``
+  },
+  {
+    name: '',
+	title_en: '',
+    code: 
+``
+  },
+  {
+    name: '',
+	title_en: '',
+    code: 
+``
+  },
+  {
+    name: '',
+	title_en: '',
+    code: 
+``
+  },
 ];
