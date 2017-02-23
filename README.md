@@ -26,6 +26,12 @@
 * Programmatic terrain
 
 
+## Enemies
+
+* Unit
+* Damage
+
+
 ### Bigger Experiments + Tutorials
 
 * How to do a rule-based AI?
