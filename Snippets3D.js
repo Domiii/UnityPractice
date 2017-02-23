@@ -170,7 +170,7 @@ public float jumpStrength = 9;
 public int colliderCount;
  
 void Update() {
-  var body = GetComponent<Rigidbody2D> ();
+  var body = GetComponent<Rigidbody> ();
   var v = body.velocity; 
   v.x = Input.GetAxis ("Horizontal") * speed;
   v.z = Input.GetAxis ("Vertical") * speed;
@@ -250,7 +250,7 @@ void OnTriggerEnter(Collider other) {
   }
 }
 
-void OnTriggerExit2D(Collider2D other) {
+void OnTriggerExit(Collider other) {
   var triggerPlayer = other.GetComponent<Player> ();
   if (triggerPlayer != null) {
     // player exited!
