@@ -843,10 +843,22 @@ void Update() {
 }`
   },
   {
-    name: '',
-	title_en: '',
+    name: 'ColorOnCollision',
+	  title_en: '',
     code: 
-``
+`Renderer ownRenderer;
+
+void Start() {
+  ownRenderer = GetComponent<Renderer> ();
+}
+
+void OnCollisionEnter(Collision other) {
+  if (other.gameObject.GetComponent<Player>() != null) {
+    // color when colliding with player!
+    var otherMaterial = other.gameObject.GetComponent<Renderer> ().material;
+    ownRenderer.material.Lerp (ownRenderer.material, otherMaterial, 0.5f);
+  }
+}`
   },
   {
     name: '',
