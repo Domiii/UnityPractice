@@ -2,42 +2,42 @@ var snippets = [
 
 // Basic transform.Translate
   {
-    title_en: 'Move Left',
+    name: 'MoveLeft',
     code: 
 `void Update () {
   transform.Translate (-0.1f, 0, 0);
 }`
   },
   {
-    title_en: 'Move Right',
+    name: 'Move Right',
     code: 
 `void Update () {
   transform.Translate (0.1f, 0, 0);
 }`
   },
   {
-    title_en: 'Move Up',
+    name: 'Move Up',
     code: 
 `void Update () {
   transform.Translate (0, 0.1f, 0);
 }`
   },
   {
-    title_en: 'Move Down',
+    name: 'Move Down',
     code: 
 `void Update () {
   transform.Translate (0, -0.1f, 0);
 }`
   },
   {
-    title_en: 'Move Forward',
+    name: 'Move Forward',
     code: 
 `void Update () {
   transform.Translate (0, 0, 0.1f);
 }`
   },
   {
-    title_en: 'Move Back',
+    name: 'Move Back',
     code: 
 `void Update () {
   transform.Translate (0, 0, -0.1f);
@@ -46,7 +46,7 @@ var snippets = [
 
 // transform.Translate + Variables
   {
-    title_en: 'MoveX',
+    name: 'MoveX',
     code: 
 `public float SpeedX;
 
@@ -55,17 +55,7 @@ void Update () {
 }`
   },
   {
-    title_en: 'MoveHorizontalSimple1',
-    code: 
-`public float SpeedX;
-public float SpeedZ;
-
-void Update () {
-  transform.Translate (SpeedX, 0, SpeedZ);
-}`
-  },
-  {
-    title_en: 'MoveHorizontalAccurate1',
+    name: 'MoveHorizontal1',
     code:
 `public float SpeedX;
 public float SpeedZ;
@@ -75,21 +65,7 @@ void FixedUpdate () {
 }`
   },
   {
-    title_en: 'MoveHorizontalSimple2',
-    code:
-`public float SpeedX, SpeedZ;
-Rigidbody body;
-
-void Start() {
-  body = GetComponent<Rigidbody> ();
-}
-
-void Update () {
-  body.velocity = new Vector3(SpeedX, body.velocity.y, SpeedZ);
-}`
-  },
-  {
-    title_en: 'MoveHorizontalAccurate2',
+    name: 'MoveHorizontal2',
     code:
 `public float SpeedX, SpeedZ;
 Rigidbody body;
@@ -103,7 +79,7 @@ void FixedUpdate () {
 }`
   },
   {
-    title_en: 'MoveWithKeyboard',
+    name: 'MoveWithKeyboard',
     code:
 `public float Speed = 2;
 Rigidbody body;
@@ -129,7 +105,7 @@ void FixedUpdate () {
 }`
   },
   {
-    title_en: 'MoveWithKeyboard2',
+    name: 'MoveWithKeyboard2',
     code:
 `public float ForwardSpeed = 2;
 public float RotationSpeed = 180;
@@ -159,23 +135,8 @@ void FixedUpdate () {
   body.velocity = move;
 }`
   },
-  
-  
-  
-  
-  
   {
-    title_en: 'Test any 2D collisions',
-    code:
-`void OnCollisionEnter2D(Collision2D other) {
-  print ("Enter: " + other.gameObject.name);
-}
- 
-void OnCollisionExit2D(Collision2D other) {
-  print ("Exit: " + other.gameObject.name);
-}`
-  },
-  {
+    name: 'CollisionTester',
     title_en: 'Test any 3D collisions',
     code:
 `void OnCollisionEnter(Collision other) {
@@ -187,22 +148,22 @@ void OnCollisionExit(Collision other) {
 }`
   },
   {
-    title_en: 'Count 2D collisions',
-    name: 'CollisionCounter2D',
+    title_en: 'Count collisions',
+    name: 'CollisionCounter',
     code:
 `public int collisionCount; 
  
-void OnCollisionEnter2D(Collision2D other) {
+void OnCollisionEnter(Collision other) {
   ++collisionCount;
 }
  
-void OnCollisionExit2D(Collision2D other) {
+void OnCollisionExit(Collision other) {
   --collisionCount;
 }`
   },
   {
-    title_en: '2D keyboard movement + jumping',
-    refs: ['CollisionCounter2D'],
+    name: 'KeyboardMove',
+    title_en: 'Keyboard movement + jumping',
     code:
 `public float speed = 3;
 public float jumpStrength = 9;
@@ -212,31 +173,40 @@ void Update() {
   var body = GetComponent<Rigidbody2D> ();
   var v = body.velocity; 
   v.x = Input.GetAxis ("Horizontal") * speed;
+  v.z = Input.GetAxis ("Vertical") * speed;
  
   if (Input.GetKeyDown (KeyCode.Space) && colliderCount > 0) {
     v.y = jumpStrength;
   }
  
   body.velocity = v;
+}
+ 
+void OnCollisionEnter(Collision other) {
+  ++collisionCount;
+}
+ 
+void OnCollisionExit(Collision other) {
+  --collisionCount;
 }`
   },
   {
-    name: 'PlayerFeet2D',
+    name: 'PlayerFeet',
     code:
 `public Player player;
  
-void OnTriggerEnter2D(Collider2D collider) {
+void OnTriggerEnter(Collider collider) {
   ++player.groundColliders;
 }
  
-void OnTriggerExit2D(Collider2D collider) {
+void OnTriggerExit(Collider collider) {
   --player.groundColliders;
 }`
   },
   {
-    name: 'Complete2DKeyboardMovement',
-    refs: ['PlayerFeet2D']
-    note: 'You still need to add the code for counting the `groundColliders`.',
+    name: 'CompleteKeyboardMovement',
+    refs: ['PlayerFeet'],
+    note: 'You still need to add the PlayerFeet for counting the `groundColliders`.',
     code:
 `public float speed = 3;
 public float jumpStrength = 9;
@@ -247,6 +217,7 @@ void Update() {
   var v = body.velocity;
  
   v.x = Input.GetAxis ("Horizontal") * speed;
+  v.z = Input.GetAxis ("Vertical") * speed;
  
   if (Input.GetKeyDown (KeyCode.Space) && groundColliders > 0) {
     v.y = jumpStrength;
@@ -263,75 +234,46 @@ void Update() {
 }`
   },
   {
-    name: 'PlayerColliderTest2D',
+    name: 'PlayerColliderTest',
     title_en: 'Only do something when colliding with player',
     code:
-`void OnTriggerEnter2D(Collider2D other) {
-  var player = other.gameObject.GetComponentInParent<Player>();
+`void OnTriggerEnter(Collider other) {
+  var player = other.gameObject.GetComponent<Player>();
   if (player != null) {
     print (player.name);
   }
 }`
   },
   {
-    name: 'TimeTest',
+    name: 'TimerTest',
     code:
-`public class Test : MonoBehaviour {
-  public float secondsSinceStart;
- 
-  void Update () {
-    secondsSinceStart += Time.deltaTime;
-  }
+`public float secondsSinceStart;
+
+void Update () {
+  secondsSinceStart += Time.deltaTime;
 }`
   },
   {
-    title: 'CameraMoverX',
-    code:
-`public float xDirection;
-Player player;
- 
-void OnTriggerEnter2D(Collider2D other) {
-  var triggerPlayer = other.gameObject.GetComponentInParent<Player> ();
-  if (triggerPlayer != null) {
-    player = triggerPlayer;
-  }
-}
- 
-void OnTriggerExit2D(Collider2D other) {
-  var triggerPlayer = other.gameObject.GetComponentInParent<Player> ();
-  if (triggerPlayer != null) {
-    player = null;
-  }
-}
- 
-void FixedUpdate() {
-  if (player != null) {
-    var xSpeed = xDirection * player.speed;
-    Camera.main.transform.Translate (xSpeed *  Time.fixedDeltaTime, 0, 0);
-  }
-}`
-  },
-  {
-    title_en: 'SpeedPickup2D',
+    name: 'SpeedPickup',
     code:
 `public float speedFactor = 2;
 
-void OnTriggerEnter2D(Collider2D other) {
-  var triggerPlayer = other.GetComponentInParent<Player> ();
+void OnTriggerEnter(Collider other) {
+  var triggerPlayer = other.GetComponent<Player> ();
   if (triggerPlayer != null) {
-    // player picked it up! 
+    // player picked it up!
     triggerPlayer.speed *= speedFactor;
     Destroy (gameObject);
   }
 }`
   },
   {
-    title_en: 'SlowTrap',
+    name: 'SlowTrap',
     code:
 `public float speedFactor = 0.5f;
 
-void OnTriggerEnter2D(Collider2D other) {
-  var triggerPlayer = other.GetComponentInParent<Player> ();
+void OnTriggerEnter(Collider other) {
+  var triggerPlayer = other.GetComponent<Player> ();
   if (triggerPlayer != null) {
     // player entered!
     triggerPlayer.speed *= speedFactor;
@@ -339,7 +281,7 @@ void OnTriggerEnter2D(Collider2D other) {
 }
 
 void OnTriggerExit2D(Collider2D other) {
-  var triggerPlayer = other.GetComponentInParent<Player> ();
+  var triggerPlayer = other.GetComponent<Player> ();
   if (triggerPlayer != null) {
     // player exited!
     triggerPlayer.speed /= speedFactor;
@@ -349,22 +291,26 @@ void OnTriggerExit2D(Collider2D other) {
   {
     name: 'DeathTrap',
     code:
-`void OnTriggerEnter2D(Collider2D other) {
-  var triggerPlayer = other.GetComponentInParent<Player> ();
+`void OnTriggerEnter(Collider other) {
+  var triggerPlayer = other.GetComponent<Player> ();
   if (triggerPlayer != null) {
     // player entered! (reset scene)
     print("You lose! :(");
     Scene scene = SceneManager.GetActiveScene(); 
     SceneManager.LoadScene(scene.name);
   }
-}
-`
+}`
   },
   {
-    title_en: 'Show note when player enters trigger',
+    name: 'ShowOnEnter',
+    title_en: 'Only show a GameObject when player enters trigger',
     code:
-`void OnTriggerEnter2D(Collider2D other) {
-  var triggerPlayer = other.GetComponentInParent<Player> ();
+`// 確認通知
+  public GameObject confirmNotice;
+  Player player;
+
+  void OnTriggerEnter(Collider other) {
+  var triggerPlayer = other.GetComponent<Player> ();
   if (triggerPlayer != null) {
     // player entered
     player = triggerPlayer;
@@ -372,8 +318,8 @@ void OnTriggerExit2D(Collider2D other) {
   }
 }
  
-void OnTriggerExit2D(Collider2D other) {
-  var triggerPlayer = other.GetComponentInParent<Player> ();
+void OnTriggerExit(Collider other) {
+  var triggerPlayer = other.GetComponent<Player> ();
   if (triggerPlayer != null) {
     // player left
     confirmNotice.SetActive (false);
@@ -382,10 +328,10 @@ void OnTriggerExit2D(Collider2D other) {
 }`
   },
   {
-    title_en: 'Shooter',
+    name: 'Shooter',
     code:
 `public GameObject bulletPrefab;
-public Transform target;
+public Transform bulletStartPlace;
 public float shootDelay = 0.5f;
 
 void Start () {
@@ -393,7 +339,7 @@ void Start () {
 }
 
 void Shoot() {
-  Instantiate (bulletPrefab, target.position, target.rotation);
+  Instantiate (bulletPrefab, bulletStartPlace.position, bulletStartPlace.rotation);
 }`
   },
   {
@@ -404,70 +350,66 @@ public float rainDropLifeTime = 2;
 Collider collider;
 
 void Start () {
-	collider = GetComponent<Collider> ();
-	collider.isTrigger = true;	// isTrigger = false makes no sense here
+  collider = GetComponent<Collider> ();
+  collider.isTrigger = true;  // isTrigger = false makes no sense here
 }
 
 void Update () {
-	DropOne ();
+  DropOne ();
 }
 
 void DropOne() {
-	var min = collider.bounds.min;
-	var max = collider.bounds.max;
-	var pos = new Vector3(Random.Range(min.x, max.x), Random.Range(min.y, max.y), Random.Range(min.z, max.z));
-	var drop = Instantiate (rainDropPrefab, pos, Quaternion.identity);
-	Destroy (drop.gameObject, rainDropLifeTime);
+  var min = collider.bounds.min;
+  var max = collider.bounds.max;
+  var pos = new Vector3(Random.Range(min.x, max.x), Random.Range(min.y, max.y), Random.Range(min.z, max.z));
+  var drop = Instantiate (rainDropPrefab, pos, Quaternion.identity);
+  Destroy (drop.gameObject, rainDropLifeTime);
 }`
   },
   {
-    title_en: 'MoveToClickPoint',
+    name: 'MoveToClickPoint',
     tags: ['navmesh'],
     code:
-`using UnityEngine;
- 
-public class MoveToClickPoint : MonoBehaviour {
-    NavMeshAgent agent;
+`NavMeshAgent agent;
 
-    void Start() {
-       agent = GetComponent<NavMeshAgent>();
-    }
- 
-    void Update() {
-        if (Input.GetMouseButtonDown(0)) {
-           RaycastHit hit;
-           if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit, 100)) {
-                agent.destination = hit.point;
-            }
+void Start() {
+   agent = GetComponent<NavMeshAgent>();
+}
+
+void Update() {
+    if (Input.GetMouseButtonDown(0)) {
+       RaycastHit hit;
+       if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit, 100)) {
+            agent.destination = hit.point;
         }
     }
 }`
   },
   {
-    title_en: 'Bomb',
+    name: 'Bomb',
     code:
 `public float radius = 10.0F;
 public float power = 100.0F;
 
 void OnCollisionEnter() {
-	Explode ();
-	Destroy (gameObject);
+  Explode ();
+  Destroy (gameObject);
 }
 
 void Explode() {
-	Vector3 explosionPos = transform.position;
-	Collider[] colliders = Physics.OverlapSphere(explosionPos, radius);
-	foreach (Collider hit in colliders) {
-		Rigidbody rb = hit.GetComponent<Rigidbody>();
+  Vector3 explosionPos = transform.position;
+  Collider[] colliders = Physics.OverlapSphere(explosionPos, radius);
+  foreach (Collider hit in colliders) {
+    Rigidbody rb = hit.GetComponent<Rigidbody>();
 
-		if (rb != null)
-			rb.AddExplosionForce(power, explosionPos, radius, 3.0F);
+    if (rb != null)
+      rb.AddExplosionForce(power, explosionPos, radius, 3.0F);
 
-	}
+  }
 }`
   },
   {
-    title_en: 'WallSpawner',
+    name: 'WallSpawner',
     code:
 `public int Nx = 10;
 public int Ny = 10;
@@ -476,36 +418,36 @@ public Material[] Materials = new Material[0];
 private float Gap = 0.01f;
 
 void Start () {
-	if (transform.childCount == 0) {
-		CreateBricks ();
-	}
+  if (transform.childCount == 0) {
+    CreateBricks ();
+  }
 }
 
 public void CreateBricks() {
-	for (var j = 0; j < Ny; ++j) {
-		var m = j % Materials.Length;
-		for (var i = 0; i < Nx; ++i) {
-			var cube = GameObject.CreatePrimitive (PrimitiveType.Cube);
-			cube.transform.SetParent(transform, false);
-			cube.transform.localScale = new Vector3(CubeSize, CubeSize, CubeSize);
+  for (var j = 0; j < Ny; ++j) {
+    var m = j % Materials.Length;
+    for (var i = 0; i < Nx; ++i) {
+      var cube = GameObject.CreatePrimitive (PrimitiveType.Cube);
+      cube.transform.SetParent(transform, false);
+      cube.transform.localScale = new Vector3(CubeSize, CubeSize, CubeSize);
 
-			var x = i * (CubeSize + Gap) + Gap;
-			var y = j * (CubeSize + Gap) + Gap;
+      var x = i * (CubeSize + Gap) + Gap;
+      var y = j * (CubeSize + Gap) + Gap;
 
-			cube.transform.localPosition = new Vector3 (x, y, 0);
-			cube.AddComponent<Rigidbody>();
-			cube.AddComponent<BoxCollider>();
+      cube.transform.localPosition = new Vector3 (x, y, 0);
+      cube.AddComponent<Rigidbody>();
+      cube.AddComponent<BoxCollider>();
 
-			cube.GetComponent<MeshRenderer> ().material = Materials[m];
-			m = (m + 1) % Materials.Length;
-		}
-	}
+      cube.GetComponent<MeshRenderer> ().material = Materials[m];
+      m = (m + 1) % Materials.Length;
+    }
+  }
 }`
   },
   {
-    name: 'NoGravity',
+    name: 'NoGravityZone',
     code:
-`public Collider coll;
+`Collider coll;
 void Start() {
     coll = GetComponent<Collider>();
     coll.isTrigger = true;
@@ -522,81 +464,53 @@ void OnTriggerExit(Collider other) {
 }`
   },
   {
+    name: 'SpeedPickupWConfirmation',
+    code:
+`// player speed multiplier when picked up
+public float speedFactor = 2;
+// 確認通知
+public GameObject confirmNotice;
+
+Player player;
+
+void Update() {
+  if (player != null && Input.GetKeyDown(KeyCode.E)) {
+    player.speed *= speedFactor;
+    Destroy (gameObject);
+  }
+}
+
+void OnTriggerEnter(Collider other) {
+  var triggerPlayer = other.GetComponent<Player> ();
+  if (triggerPlayer != null) {
+    // player entered the PickUp
+    player = triggerPlayer;
+    confirmNotice.SetActive (true);
+  }
+}
+
+void OnTriggerExit(Collider other) {
+  var triggerPlayer = other.GetComponent<Player> ();
+  if (triggerPlayer != null && triggerPlayer == player) {
+    confirmNotice.SetActive (false);
+    player = null;
+  }
+}`
+  },
+  {
+    name: '',
     title_en: '',
     code:
 ``
   },
   {
+    name: '',
     title_en: '',
     code:
 ``
   },
   {
-    title_en: '',
-    code:
-``
-  },
-  {
-    title_en: '',
-    code:
-``
-  },
-  {
-    title_en: '',
-    code:
-``
-  },
-  {
-    title_en: '',
-    code:
-``
-  },
-  {
-    title_en: '',
-    code:
-``
-  },
-  {
-    title_en: '',
-    code:
-``
-  },
-  {
-    title_en: '',
-    code:
-``
-  },
-  {
-    title_en: '',
-    code:
-``
-  },
-  {
-    title_en: '',
-    code:
-``
-  },
-  {
-    title_en: '',
-    code:
-``
-  },
-  {
-    title_en: '',
-    code:
-``
-  },
-  {
-    title_en: '',
-    code:
-``
-  },
-  {
-    title_en: '',
-    code:
-``
-  },
-  {
+    name: '',
     title_en: '',
     code:
 ``
