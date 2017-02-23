@@ -477,9 +477,7 @@ void OnTriggerExit(Collider other) {
 /// </summary>
 public float VirtualTimeOfDay;
 public float RealSecondsPerDay = 10;
-public Vector3 AxisOfRotation = new Vector3 (1, 1, 0);
-
-Quaternion startingRotation;
+public Vector3 AxisOfRotation = new Vector3 (2, 1, 0);
 
 void Start ()
 {
@@ -487,7 +485,6 @@ void Start ()
   var systemTimeOfDay = System.DateTime.Now.TimeOfDay;
   VirtualTimeOfDay = (float)systemTimeOfDay.TotalDays;
 
-  startingRotation = transform.localRotation;
   AxisOfRotation.Normalize (); // normalize axis
 }
 
@@ -504,10 +501,70 @@ void Update ()
 }`
   },
   {
-    name: '',
-    title_en: '',
+    name: 'HaloPickup',
+    title_en: 'Hovers over player\'s head when picked up.',
     code:
-``
+`public Player player;
+public Vector3 relativePosition = new Vector3(0, 1, 0);
+public Vector3 bobbingRadius = new Vector3(1, 0.4f, 1);
+public float bobbingSpeed = 0.5f;
+
+Vector2 startPos;
+
+public bool IsEquipped {
+	get {
+		return player != null;
+	}
+}
+
+void Start() {
+	startPos = transform.position;
+}
+
+void Update() {
+	if (IsEquipped) {
+		Hover ();
+
+		if (Input.GetKeyDown (KeyCode.Space)) {
+			Unequip ();
+		}
+	}
+}
+
+void Hover() {
+	var pos = player.transform.position + relativePosition;
+	var theta = Time.time * 2 * Mathf.PI * bobbingSpeed;
+	pos.x += Mathf.Sin(theta) * bobbingRadius.x;
+	pos.z += Mathf.Cos(theta) * bobbingRadius.z;
+	pos.y += Mathf.Sin(0.5f * theta) * bobbingRadius.y;
+	transform.position = pos;
+}
+
+void OnTriggerEnter(Collider other) {
+	if (IsEquipped) {
+		// don't do anything when already equipped
+		return;
+	}
+
+	var triggerPlayer = other.GetComponentInParent<Player> ();
+	if (triggerPlayer != null) {
+		Equip (triggerPlayer);
+	}
+}
+
+void Equip(Player triggerPlayer) {
+	player = triggerPlayer;
+	transform.localScale /= 2;
+}
+
+/// <summary>
+/// Player dropped (放下) the halo
+/// </summary>
+void Unequip() {
+	transform.localScale *= 2;
+	player = null;
+	transform.position = startPos;
+}`
   },
   {
     name: '',
