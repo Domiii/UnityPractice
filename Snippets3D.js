@@ -204,36 +204,6 @@ void OnTriggerExit(Collider collider) {
 }`
   },
   {
-    name: 'CompleteKeyboardMovement',
-    refs: ['PlayerFeet'],
-    note: 'You still need to add the PlayerFeet for counting the `groundColliders`.',
-    code:
-`public float speed = 3;
-public float jumpStrength = 9;
-public int groundColliders;
- 
-void Update() {
-  var body = GetComponent<Rigidbody2D> ();
-  var v = body.velocity;
- 
-  v.x = Input.GetAxis ("Horizontal") * speed;
-  v.z = Input.GetAxis ("Vertical") * speed;
- 
-  if (Input.GetKeyDown (KeyCode.Space) && groundColliders > 0) {
-    v.y = jumpStrength;
-  }
- 
-  body.velocity = v;
- 
-  //  face current walking direction
-  if (v.x != 0) {
-    var scale = transform.localScale;
-    scale.x = Mathf.Sign (v.x) * Mathf.Abs(scale.x);
-    transform.localScale = scale;
-  }
-}`
-  },
-  {
     name: 'PlayerColliderTest',
     title_en: 'Only do something when colliding with player',
     code:
