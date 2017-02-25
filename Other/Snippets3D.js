@@ -65,7 +65,7 @@ void FixedUpdate () {
 }`
   },
   {
-    name: 'MoveHorizontal2',
+    name: 'MoveHorizontal',
     code:
 `public float SpeedX, SpeedZ;
 Rigidbody body;
