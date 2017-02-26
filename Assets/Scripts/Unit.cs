@@ -5,12 +5,18 @@ public class Unit : MonoBehaviour
 {
 	public float maxHealth = 100;
 	public float health = 100;
-	public bool canBeAttacked = true;
+	public bool isInvulnerable = false;
 
 	#region Life, Health + Death
 
 	public bool IsAlive {
 		get { return health > 0; }
+	}
+
+	public bool CanBeAttacked {
+		get {
+			return IsAlive && !isInvulnerable;
+		}
 	}
 
 	public void Kill ()
@@ -22,7 +28,7 @@ public class Unit : MonoBehaviour
 	void Die (float damagePoints)
 	{
 		health = 0;
-		canBeAttacked = false;
+		isInvulnerable = false;
 
 		// notify other components on this object about its death
 		SendMessage ("OnDeath", SendMessageOptions.DontRequireReceiver);
@@ -38,7 +44,7 @@ public class Unit : MonoBehaviour
 
 	public void Damage (float damagePoints)
 	{
-		if (!IsAlive || !canBeAttacked) {
+		if (!CanBeAttacked) {
 			// cannot be attacked right now
 			return;
 		}

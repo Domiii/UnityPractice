@@ -29,7 +29,7 @@ public class KeyboardMove : MonoBehaviour
 		v.x = Input.GetAxis ("Horizontal") * hasSpeed.speed;
 		v.z = Input.GetAxis ("Vertical") * hasSpeed.speed;
    
-		if (Input.GetAxisRaw("Jump") != 0 && CanJump) {
+		if (Input.GetAxisRaw ("Jump") != 0 && CanJump) {
 			v.y = jumpStrength;
 		}
    

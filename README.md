@@ -39,27 +39,228 @@
 
 
 ### Some missing scripts
-  {
-    name: 'ShowOnEnter',
-    title_en: 'Only show a GameObject when player enters trigger',
-    code:
-``
-  },
-  {
-    name: 'Shooter',
-    code:
-`public GameObject bulletPrefab;
-public Transform bulletStartPlace;
-public float shootDelay = 0.5f;
 
-void Start () {
-  InvokeRepeating ("Shoot", shootDelay, shootDelay);
+
+// ####################################
+// HuntTarget.cs
+// ####################################
+
+using UnityEngine;
+using System.Collections;
+
+  public class HuntTargetAction : AIAction {
+    public Unit target;
+  }
+
+  /// <summary>
+  /// Attack given target when close enough; else move and catch up
+  /// </summary>
+  [RequireComponent(typeof(UnitAttacker))]
+  [RequireComponent(typeof(NavMeshMover))]
+  public class HuntTarget : AIStrategy<HuntTargetAction> {
+    UnitAttacker attacker;
+    NavMeshMover mover;
+
+    #region Public
+    public Unit CurrentTarget {
+      get {
+        return attacker.CurrentTarget;
+      }
+    }
+
+    public override void StartBehavior(HuntTargetAction action) {
+      attacker.StartAttack(action.target);
+      mover.StopMovingAtDestination = false;
+    }
+    #endregion
+
+    void Awake () {
+      attacker = GetComponent<UnitAttacker> ();
+      mover = GetComponent<NavMeshMover> ();
+    }
+
+    void Update () {
+      // current target out of range -> move to catch up
+      if (attacker.IsCurrentValid) {
+        if (attacker.IsCurrentInRange) {
+          // keep attacking; also: make sure, we are not moving
+          mover.StopMove();
+        }
+        else {
+          // target out of range -> move toward target
+          mover.CurrentDestination = attacker.CurrentTarget.transform.position;
+          attacker.StopAttack ();
+        }
+      }
+      else {
+        // we have no more valid target (target might have died, disappeared, turned etc) -> done!
+        StopStrategy();
+      }
+    }
+
+    /// <summary>
+    /// Called when finished hunting.
+    /// </summary>
+    protected override void OnStop() {
+      attacker.StopAttack();
+      mover.StopMove ();
+    }
+  }
+
+
+// ####################################
+// MoveToDestination.cs
+// ####################################
+
+using UnityEngine;
+using System.Collections;
+ 
+public class MoveToDestinationAction : AIAction {
+  public Vector3 destination;
 }
 
-void Shoot() {
-  Instantiate (bulletPrefab, bulletStartPlace.position, bulletStartPlace.rotation);
-}`
-  },
+/// <summary>
+/// Move to destination, don't let anything distract you from that.
+/// </summary>
+[RequireComponent(typeof(NavMeshMover))]
+public class MoveToDestination : AIStrategy<MoveToDestinationAction> {
+  NavMeshMover mover;
+
+  void Awake () {
+    mover = GetComponent<NavMeshMover> ();
+  }
+
+  #region Public
+  public Vector3 CurrentDestination {
+    get { 
+      return mover.CurrentDestination;
+    }
+  }
+
+  public override void StartBehavior(MoveToDestinationAction action) {
+    mover.CurrentDestination = action.destination;
+    mover.StopMovingAtDestination = true;
+  }
+  #endregion
+
+  void Update () {
+    if (mover.HasArrived) {
+      StopStrategy ();
+    }
+  }
+
+  /// <summary>
+  /// Called when finished moving.
+  /// </summary>
+  protected override void OnStop() {
+    mover.StopMove ();
+  }
+}
+
+
+// ####################################
+// RandomWander.cs
+// ####################################
+
+using UnityEngine;
+using System.Collections;
+using UnityEngine.AI;
+
+public class RandomWanderAction : AIAction {
+  public static readonly RandomWanderAction Default = new RandomWanderAction();
+}
+
+/// <summary>
+/// Just move around randomly
+/// </summary>
+[RequireComponent(typeof(NavMeshMover))]
+[RequireComponent(typeof(NavMeshAgent))]
+public class RandomWander : AIStrategy<RandomWanderAction> {
+  float smoothness = 1;
+  NavMeshMover mover;
+  NavMeshAgent agent;
+
+  void Start() {
+    mover = GetComponent<NavMeshMover> ();
+    agent = GetComponent<NavMeshAgent> ();
+    MoveIntoRandomDirection ();
+  }
+
+  void Update() {
+    if (mover.HasArrived) {
+      MoveIntoRandomDirection ();
+    }
+  }
+
+  public override void StartBehavior(RandomWanderAction action) {
+    mover.StopMovingAtDestination = true;
+    MoveIntoRandomDirection ();
+  }
+
+  void MoveIntoRandomDirection() {
+    // determine new random point in space
+    var dir = Random.insideUnitSphere;
+    dir.y = 0;
+    var ray = dir * smoothness * agent.speed;
+    var newPos = transform.position + ray;
+
+
+    // project point onto NavMesh
+    NavMeshHit hit;
+    if (NavMesh.SamplePosition (newPos, out hit, 1000, NavMesh.AllAreas)) {
+      // Go!
+      mover.CurrentDestination = hit.position;
+    }
+  }
+
+  protected override void OnStop() {
+    mover.StopMove ();
+  }
+}
+
+
+// ####################################
+// RandomWanderAndHunt.cs
+// ####################################
+
+using UnityEngine;
+using System.Collections;
+
+/// <summary>
+/// Just move around randomly
+/// </summary>
+[RequireComponent(typeof(RandomWander))]
+[RequireComponent(typeof(HuntTarget))]
+public class RandomWanderAndHunt : AIStrategy {
+  
+}
+
+
+
+// ####################################
+// WanderAndShoot.cs
+// ####################################
+
+using UnityEngine;
+using System.Collections;
+
+[RequireComponent(typeof(RandomWander))]
+[RequireComponent(typeof(UnitAttacker))]
+public class WanderAndShoot : AIStrategy {
+  void Start() {
+    Reset ();
+  }
+
+  void Reset() {
+    GetComponent<UnitAttacker> ().attackOnSight = true;
+  }
+}
+
+// ####################################
+// More
+// ####################################
+
+
   {
     name: 'RainMaker',
     code:

@@ -25,11 +25,11 @@ public class KeyboardMoveAndTurn : MonoBehaviour
 	void Update ()
 	{
 		// get input in Update()
-		moveRotation = Input.GetAxisRaw("Horizontal");
-		moveForward = Input.GetAxis("Vertical");
+		moveRotation = Input.GetAxisRaw ("Horizontal");
+		moveForward = Input.GetAxis ("Vertical");
 
 		if (CanJump) {
-			jumping = jumping || Input.GetKey(KeyCode.Space);
+			jumping = jumping || Input.GetKey (KeyCode.Space);
 		}
 	}
 
