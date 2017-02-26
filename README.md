@@ -43,27 +43,7 @@
     name: 'ShowOnEnter',
     title_en: 'Only show a GameObject when player enters trigger',
     code:
-`// 確認通知
-  public GameObject confirmNotice;
-  Player player;
-
-  void OnTriggerEnter(Collider other) {
-  var triggerPlayer = other.GetComponent<Player> ();
-  if (triggerPlayer != null) {
-    // player entered
-    player = triggerPlayer;
-    confirmNotice.SetActive (true);
-  }
-}
- 
-void OnTriggerExit(Collider other) {
-  var triggerPlayer = other.GetComponent<Player> ();
-  if (triggerPlayer != null) {
-    // player left
-    confirmNotice.SetActive (false);
-    player = null;
-  }
-}`
+``
   },
   {
     name: 'Shooter',
@@ -180,25 +160,6 @@ public void CreateBricks() {
       m = (m + 1) % Materials.Length;
     }
   }
-}`
-  },
-  {
-    name: 'NoGravityZone',
-    code:
-`Collider coll;
-void Start() {
-    coll = GetComponent<Collider>();
-    coll.isTrigger = true;
-}
-void OnTriggerEnter(Collider other) {
-    if (other.attachedRigidbody)
-        other.attachedRigidbody.useGravity = false;
-    
-}
-void OnTriggerExit(Collider other) {
-    if (other.attachedRigidbody)
-        other.attachedRigidbody.useGravity = true;
-    
 }`
   },
   {
@@ -514,30 +475,7 @@ void OnTriggerEnter(Collider collider) {
     name: 'MoveWithTarget',
     title_en: 'First add empty object (a "mount") exactly onto the target object. Then add this component to the "mount" object. Finally, add any objects you want it to follow (e.g. camera) as children to "mount".',
     code: 
-`public Rigidbody target;
-public float turnSpeed = 8;
-
-Vector3 offset;
-Vector3 targetDirection;
-
-void Start () {
-  offset = transform.position - target.transform.position;
-  targetDirection = target.transform.forward;
-}
-
-void FixedUpdate () {
-  if (target != null) {
-    transform.position = target.transform.position + offset;
-    var v = target.velocity;
-    v.y = 0;
-    if (v.sqrMagnitude > 0) {
-      // cannot normalize zero vectors
-      targetDirection = v;
-      targetDirection.Normalize ();
-    }
-    transform.forward = Vector3.Slerp(transform.forward, targetDirection, Time.deltaTime * turnSpeed);
-  }
-}`
+``
   },
   {
     name: 'Healthbar',

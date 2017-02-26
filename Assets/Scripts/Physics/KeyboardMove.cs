@@ -8,26 +8,28 @@ using UnityEngine;
 
 [RequireComponent (typeof(Rigidbody))]
 [RequireComponent (typeof(HasSpeed))]
-public class MoveWithKeyboard : MonoBehaviour
+public class KeyboardMove : MonoBehaviour
 {
 	public float jumpStrength = 9;
+
 	public CollisionCounter groundCollisionCounter;
 
 	HasSpeed hasSpeed;
+	Rigidbody body;
 
 	void Start ()
 	{
 		hasSpeed = GetComponent<HasSpeed> ();
+		body = GetComponent<Rigidbody> ();
 	}
 
-	void Update ()
+	void FixedUpdate ()
 	{
-		var body = GetComponent<Rigidbody> ();
 		var v = body.velocity; 
 		v.x = Input.GetAxis ("Horizontal") * hasSpeed.speed;
 		v.z = Input.GetAxis ("Vertical") * hasSpeed.speed;
    
-		if (Input.GetKeyDown (KeyCode.Space) && CanJump) {
+		if (Input.GetAxisRaw("Jump") != 0 && CanJump) {
 			v.y = jumpStrength;
 		}
    
@@ -35,6 +37,6 @@ public class MoveWithKeyboard : MonoBehaviour
 	}
 
 	public bool CanJump {
-		get { return groundCollisionCounter == null || !groundCollisionCounter.HasAnyCollisions; }
+		get { return groundCollisionCounter == null || groundCollisionCounter.HasAnyCollisions || !body.useGravity; }
 	}
 }

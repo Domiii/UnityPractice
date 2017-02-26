@@ -28,7 +28,7 @@ public class SpeedPickupWConfirmation : MonoBehaviour
 
 	void OnTriggerEnter (Collider other)
 	{
-		var triggerer = other.GetComponent<HasSpeed> ();
+		var triggerer = other.GetComponent<Player> ();
 		if (triggerer != null) {
 			// player entered the PickUp
 			player = triggerer;
@@ -38,7 +38,7 @@ public class SpeedPickupWConfirmation : MonoBehaviour
 
 	void OnTriggerExit (Collider other)
 	{
-		var triggerer = other.GetComponent<HasSpeed> ();
+		var triggerer = other.GetComponent<Player> ();
 		if (triggerer != null && triggerer == player) {
 			confirmNotice.SetActive (false);
 			player = null;
