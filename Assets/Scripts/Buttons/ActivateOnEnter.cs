@@ -13,12 +13,16 @@ public class ActivateOnEnter : MonoBehaviour
 	Player player;
 	ColorMixer colorMixer;
 
-	void Start() {
+	void Start ()
+	{
 		colorMixer = GetComponent<ColorMixer> ();
 	}
 
 	void OnTriggerEnter (Collider other)
 	{
+		if (toggledObject != null) {
+			return;
+		}
 		var triggerPlayer = other.GetComponent<Player> ();
 		if (triggerPlayer != null) {
 			// player entered
@@ -27,13 +31,16 @@ public class ActivateOnEnter : MonoBehaviour
 
 			if (colorMixer != null) {
 				// update color!
-				colorMixer.MixColorWith(player.GetComponent<Renderer> ());
+				colorMixer.MixColorWith (player.GetComponent<Renderer> ());
 			}
 		}
 	}
 
 	void OnTriggerExit (Collider other)
 	{
+		if (toggledObject != null) {
+			return;
+		}
 		var triggerPlayer = other.GetComponent<Player> ();
 		if (triggerPlayer != null && triggerPlayer == player) {
 			// player left

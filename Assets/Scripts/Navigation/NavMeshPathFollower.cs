@@ -44,7 +44,7 @@ public class NavMeshPathFollower : MonoBehaviour
 	void Start ()
 	{
 		mover = GetComponent<NavMeshMover> ();
-		mover.StopMovingAtDestination = true;
+		mover.stopMovingAtDestination = true;
 		RestartPath ();
 	}
 

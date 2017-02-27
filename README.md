@@ -40,72 +40,88 @@
 
 ### Some missing scripts
 
-
-// ####################################
-// HuntTarget.cs
-// ####################################
+// ClickToShoot.cs
 
 using UnityEngine;
 using System.Collections;
+using UnityEngine.AI;
 
-  public class HuntTargetAction : AIAction {
-    public Unit target;
+public class WASDClickToShootPlayerControl : PlayerControlBase {
+  public float speed = 8;
+  bool mouseDown;
+  Plane testPlane;
+
+  public bool IsOnNavMesh(out NavMeshHit hit) {
+    return NavMesh.Raycast (transform.position, transform.position + Vector3.down * 100, out hit, NavMesh.AllAreas);
   }
 
-  /// <summary>
-  /// Attack given target when close enough; else move and catch up
-  /// </summary>
-  [RequireComponent(typeof(UnitAttacker))]
-  [RequireComponent(typeof(NavMeshMover))]
-  public class HuntTarget : AIStrategy<HuntTargetAction> {
-    UnitAttacker attacker;
-    NavMeshMover mover;
+  void Start() {
+    // create a plane at 0,0,0 whose normal points to +Y
+    testPlane = new Plane ();
+  }
 
-    #region Public
-    public Unit CurrentTarget {
-      get {
-        return attacker.CurrentTarget;
+  void Update() {
+    CheckClick ();
+  }
+
+  void FixedUpdate() {
+    Move ();
+  }
+
+  void Move() {
+    MoveByInput();
+    //PlaceOnNavMesh ();
+  }
+
+  void MoveByInput() {
+    var delta = new Vector3 ();
+    delta.x = Input.GetAxis("Horizontal");
+    delta.z = Input.GetAxis("Vertical");
+    delta.Normalize ();
+
+    transform.position = transform.position + delta * speed * Time.fixedDeltaTime;
+  }
+
+  void PlaceOnNavMesh() {
+    NavMeshHit hit;
+    if (!IsOnNavMesh(out hit)) {
+      // place back on navmesh
+      if (NavMesh.SamplePosition (transform.position, out hit, 100, NavMesh.AllAreas)) {
+        // get bounds, and place bottom face of bounds at position
+        var mesh = GetComponent<Collider>();
+        var originHeight = -mesh.bounds.min.y;
+        transform.position = hit.position + Vector3.up * originHeight;
       }
-    }
-
-    public override void StartBehavior(HuntTargetAction action) {
-      attacker.StartAttack(action.target);
-      mover.StopMovingAtDestination = false;
-    }
-    #endregion
-
-    void Awake () {
-      attacker = GetComponent<UnitAttacker> ();
-      mover = GetComponent<NavMeshMover> ();
-    }
-
-    void Update () {
-      // current target out of range -> move to catch up
-      if (attacker.IsCurrentValid) {
-        if (attacker.IsCurrentInRange) {
-          // keep attacking; also: make sure, we are not moving
-          mover.StopMove();
-        }
-        else {
-          // target out of range -> move toward target
-          mover.CurrentDestination = attacker.CurrentTarget.transform.position;
-          attacker.StopAttack ();
-        }
-      }
-      else {
-        // we have no more valid target (target might have died, disappeared, turned etc) -> done!
-        StopStrategy();
-      }
-    }
-
-    /// <summary>
-    /// Called when finished hunting.
-    /// </summary>
-    protected override void OnStop() {
-      attacker.StopAttack();
-      mover.StopMove ();
     }
   }
+
+  void CheckClick() {
+    if (Input.GetMouseButtonDown (0)) {
+      HandleMouse (true);
+      mouseDown = true;
+    } else if (Input.GetMouseButton (0)) {
+      HandleMouse (false);
+    } else if (mouseDown) {
+      // idle
+      mouseDown = false;
+      NextAction = Strategies.IdleAction.Default;
+    } 
+  }
+
+  void HandleMouse(bool clicked) {
+    // see: http://answers.unity3d.com/questions/269760/ray-finding-out-x-and-z-coordinates-where-it-inter.html
+    // cast ray onto plane that goes through our current position and normal points upward
+    Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+    testPlane.SetNormalAndPosition (Vector3.up, transform.position);
+    float distance; 
+    if (testPlane.Raycast(ray, out distance)){
+      var target = ray.GetPoint(distance);
+      NextAction = new Strategies.ShootInDirectionAction {
+        destination = target
+      };
+    }
+  }
+}
 
 
 // ####################################
@@ -154,105 +170,6 @@ public class MoveToDestination : AIStrategy<MoveToDestinationAction> {
   /// </summary>
   protected override void OnStop() {
     mover.StopMove ();
-  }
-}
-
-
-// ####################################
-// RandomWander.cs
-// ####################################
-
-using UnityEngine;
-using System.Collections;
-using UnityEngine.AI;
-
-public class RandomWanderAction : AIAction {
-  public static readonly RandomWanderAction Default = new RandomWanderAction();
-}
-
-/// <summary>
-/// Just move around randomly
-/// </summary>
-[RequireComponent(typeof(NavMeshMover))]
-[RequireComponent(typeof(NavMeshAgent))]
-public class RandomWander : AIStrategy<RandomWanderAction> {
-  float smoothness = 1;
-  NavMeshMover mover;
-  NavMeshAgent agent;
-
-  void Start() {
-    mover = GetComponent<NavMeshMover> ();
-    agent = GetComponent<NavMeshAgent> ();
-    MoveIntoRandomDirection ();
-  }
-
-  void Update() {
-    if (mover.HasArrived) {
-      MoveIntoRandomDirection ();
-    }
-  }
-
-  public override void StartBehavior(RandomWanderAction action) {
-    mover.StopMovingAtDestination = true;
-    MoveIntoRandomDirection ();
-  }
-
-  void MoveIntoRandomDirection() {
-    // determine new random point in space
-    var dir = Random.insideUnitSphere;
-    dir.y = 0;
-    var ray = dir * smoothness * agent.speed;
-    var newPos = transform.position + ray;
-
-
-    // project point onto NavMesh
-    NavMeshHit hit;
-    if (NavMesh.SamplePosition (newPos, out hit, 1000, NavMesh.AllAreas)) {
-      // Go!
-      mover.CurrentDestination = hit.position;
-    }
-  }
-
-  protected override void OnStop() {
-    mover.StopMove ();
-  }
-}
-
-
-// ####################################
-// RandomWanderAndHunt.cs
-// ####################################
-
-using UnityEngine;
-using System.Collections;
-
-/// <summary>
-/// Just move around randomly
-/// </summary>
-[RequireComponent(typeof(RandomWander))]
-[RequireComponent(typeof(HuntTarget))]
-public class RandomWanderAndHunt : AIStrategy {
-  
-}
-
-
-
-// ####################################
-// WanderAndShoot.cs
-// ####################################
-
-using UnityEngine;
-using System.Collections;
-
-[RequireComponent(typeof(RandomWander))]
-[RequireComponent(typeof(UnitAttacker))]
-public class WanderAndShoot : AIStrategy {
-  void Start() {
-    Reset ();
-  }
-
-  void Reset() {
-    GetComponent<UnitAttacker> ().attackOnSight = true;
   }
 }
 

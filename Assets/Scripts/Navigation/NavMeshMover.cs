@@ -7,6 +7,8 @@ using UnityEngine.AI;
 [RequireComponent (typeof(HasSpeed))]
 public class NavMeshMover : MonoBehaviour
 {
+	public bool stopMovingAtDestination = false;
+
 	NavMeshAgent agent;
 	HasSpeed hasSpeed;
 	bool isMoving;
@@ -16,27 +18,20 @@ public class NavMeshMover : MonoBehaviour
 
 	#region Public
 
-	public bool StopMovingAtDestination {
-		get;
-		set;
-	}
-
 	public bool HasArrived {
 		get;
 		private set;
 	}
 
 	public bool IsMoving {
-		get { return !isMoving; }
+		get { return isMoving; }
 	}
 
 	public Vector3 CurrentDestination {
 		get { return agent.destination; }
 		set {
-			if (!isMoving) {
-				// start moving!
-				StartMove ();
-			}
+			// start moving!
+			StartMove ();
 
 			// update position
 			agent.SetDestination (value);
@@ -48,7 +43,6 @@ public class NavMeshMover : MonoBehaviour
 	public void StopMove ()
 	{ 
 		if (isMoving) {
-			HasArrived = true;
 			isMoving = false;
 			agent.Stop ();
 			NotifyOnStopMove ();
@@ -59,8 +53,8 @@ public class NavMeshMover : MonoBehaviour
 
 	void StartMove ()
 	{
+		HasArrived = false;	
 		if (!isMoving) {
-			HasArrived = false;
 			startedMovingFlag = false;
 			isMoving = true;
 			agent.Resume ();
@@ -68,12 +62,7 @@ public class NavMeshMover : MonoBehaviour
 		}
 	}
 
-	void Reset ()
-	{
-		StopMovingAtDestination = true;
-	}
-
-	void Start ()
+	void Awake ()
 	{
 		agent = GetComponent<NavMeshAgent> ();
 		hasSpeed = GetComponent<HasSpeed> ();
@@ -102,9 +91,10 @@ public class NavMeshMover : MonoBehaviour
 			if (!startedMovingFlag) {
 				// hackfix: during the first update cycle after assigning a target, remainingDistance is still 0!
 				startedMovingFlag = true;
-			} else if (StopMovingAtDestination) {
-				if (agent.remainingDistance <= agent.stoppingDistance) {
-					// done!
+			} else if (agent.remainingDistance <= agent.stoppingDistance) {
+				// done!
+				HasArrived = true;
+				if (stopMovingAtDestination) {
 					StopMove ();
 				}
 			}

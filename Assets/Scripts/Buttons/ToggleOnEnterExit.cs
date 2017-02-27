@@ -22,7 +22,7 @@ public class ToggleOnEnterExit : MonoBehaviour
 	void OnTriggerEnter (Collider other)
 	{
 		var triggerPlayer = other.GetComponent<Player> ();
-		if (triggerPlayer != null) {
+		if (triggerPlayer != null && toggledObject != null) {
 			// player entered
 			toggledObject.SetActive (!toggledObject.activeSelf);
 
