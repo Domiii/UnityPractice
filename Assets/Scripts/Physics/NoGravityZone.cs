@@ -6,8 +6,6 @@ using UnityEngine;
 public class NoGravityZone : MonoBehaviour
 {
 	Collider coll;
-	bool originalGravity;
-	float originalDrag;
 
 	void Start ()
 	{
@@ -18,9 +16,6 @@ public class NoGravityZone : MonoBehaviour
 	void OnTriggerEnter (Collider other)
 	{
 		if (other.attachedRigidbody) {
-			originalGravity = other.attachedRigidbody.useGravity;
-			originalDrag = other.attachedRigidbody.drag;
-
 			other.attachedRigidbody.useGravity = false;
 			other.attachedRigidbody.drag = 1;
 		}
@@ -29,8 +24,8 @@ public class NoGravityZone : MonoBehaviour
 	void OnTriggerExit (Collider other)
 	{
 		if (other.attachedRigidbody) {
-			other.attachedRigidbody.useGravity = originalGravity;
-			other.attachedRigidbody.drag = originalDrag;
+			other.attachedRigidbody.useGravity = true;
+			other.attachedRigidbody.drag = 0;
 		}
 	}
 }
