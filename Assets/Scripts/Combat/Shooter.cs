@@ -156,6 +156,9 @@ public class Shooter : MonoBehaviour
 		// set bullet faction
 		FactionManager.SetFaction (bullet.gameObject, gameObject);
 
+		// make sure, we always shoot horizontally
+		dir.y = 0;
+
 		// set velocity
 		var rigidbody = bullet.GetComponent<Rigidbody> ();
 		rigidbody.velocity = dir * bullet.speed;
