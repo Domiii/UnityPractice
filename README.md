@@ -11,25 +11,16 @@
 ### UI
 
 * Light switch
-* More basic examples
-* Simplistic healthbar
 * Quiz UI
 
 
 ### Colliders, Meshes + Materials
 
-* Color.Lerp
 * Getting + working with a Collider programmatically
 * Working with bounding box
 * Getting + working with a Mesh programmatically
 * Modifying a mesh
 * Programmatic terrain
-
-
-## Enemies
-
-* Unit
-* Damage
 
 
 ### Bigger Experiments + Tutorials
@@ -40,6 +31,22 @@
 
 ### Some missing scripts
 
+
+// TODO: LevelManager
+
+// PlaySoundOnClick.cs
+
+using UnityEngine;
+using System.Collections;
+
+public class PlaySoundOnClick : MonoBehaviour {
+    void OnMouseDown() {
+        var audioSource = GetComponent<AudioSource>();
+        if (audioSource != null) {
+            audioSource.Play();
+        }
+    }
+}
 
 // ####################################
 // MoveToDestination.cs
