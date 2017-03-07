@@ -3,19 +3,16 @@ using System.Collections;
 using UnityEngine.AI;
 
 
-public class ClickToShoot : MonoBehaviour
-{
+public class ClickToShoot : MonoBehaviour {
 	bool isShooting = false;
 	Plane testPlane;
 
-	void Start ()
-	{
+	void Start () {
 		// create a plane at (0,0,0) whose normal points upward (i.e. parallel to XZ)
 		testPlane = new Plane ();
 	}
 
-	void Update ()
-	{
+	void Update () {
 		if (Input.GetMouseButton (0)) {
 			_StartShooting ();
 			isShooting = true;
@@ -25,8 +22,7 @@ public class ClickToShoot : MonoBehaviour
 		}
 	}
 
-	void _StartShooting ()
-	{
+	void _StartShooting () {
 		// see: http://answers.unity3d.com/questions/269760/ray-finding-out-x-and-z-coordinates-where-it-inter.html
 		// cast ray onto plane that goes through our current position and normal points upward
 		Ray ray = Camera.main.ScreenPointToRay (Input.mousePosition);
@@ -38,7 +34,7 @@ public class ClickToShoot : MonoBehaviour
 		}
 	}
 
-	void _StopShooting() {
+	void _StopShooting () {
 		SendMessage ("StopShooting", SendMessageOptions.DontRequireReceiver);
 	}
 }

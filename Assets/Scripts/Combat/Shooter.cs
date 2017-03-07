@@ -2,8 +2,7 @@
 using System.Collections;
 using UnityEngine.AI;
 
-public class Shooter : MonoBehaviour
-{
+public class Shooter : MonoBehaviour {
 	public WeaponConfig weapon = new WeaponConfig ();
 	public float turnSpeed = 1000.0f;
 	public Transform shootTransform;
@@ -28,28 +27,23 @@ public class Shooter : MonoBehaviour
 		}
 	}
 
-	public void StartShootingAt (Vector3 target)
-	{
+	public void StartShootingAt (Vector3 target) {
 		currentTarget = target;
 		IsAttacking = true;
 	}
 
-	public void StopShooting ()
-	{
+	public void StopShooting () {
 		IsAttacking = false;
 	}
 
-	void OnStartAttack ()
-	{
+	void OnStartAttack () {
 	}
 
-	void OnStopAttack ()
-	{
+	void OnStopAttack () {
 		//lastShotTime = Time.time;
 	}
 
-	void Awake ()
-	{
+	void Awake () {
 		if (weapon == null) {
 			print ("Shooter is missing Weapon");
 			return;
@@ -65,8 +59,7 @@ public class Shooter : MonoBehaviour
 		isAttacking = false;
 	}
 
-	void Update ()
-	{
+	void Update () {
 		if (isAttacking) {
 			// some debug stuff
 			var dir = currentTarget - transform.position;
@@ -85,20 +78,17 @@ public class Shooter : MonoBehaviour
 		}
 	}
 
-	Quaternion GetRotationToward (Vector3 target)
-	{
+	Quaternion GetRotationToward (Vector3 target) {
 		Vector3 dir = target - shootTransform.position;
 		return GetRotationFromDirection (dir);
 	}
 
-	Quaternion GetRotationFromDirection (Vector3 dir)
-	{
+	Quaternion GetRotationFromDirection (Vector3 dir) {
 		var angle = Mathf.Atan2 (dir.x, dir.z) * Mathf.Rad2Deg;
 		return Quaternion.AngleAxis (angle, Vector3.up);
 	}
 
-	void RotateTowardTarget ()
-	{
+	void RotateTowardTarget () {
 		var rigidbody = GetComponent<Rigidbody> ();
 		if (rigidbody != null && (rigidbody.constraints & RigidbodyConstraints.FreezePositionY) != 0) {
 			// don't rotate if rotation has been constrained
@@ -114,13 +104,11 @@ public class Shooter : MonoBehaviour
 		shootTransform.rotation = Quaternion.RotateTowards (shootTransform.rotation, targetRotation, Time.deltaTime * turnSpeed);
 	}
 
-	public void ShootAt (Transform t)
-	{
+	public void ShootAt (Transform t) {
 		ShootAt (t.position);
 	}
 
-	public void ShootAt (Vector3 target)
-	{
+	public void ShootAt (Vector3 target) {
 		if (weapon == null || weapon.bulletPrefab == null) {
 			return;
 		}
@@ -148,8 +136,7 @@ public class Shooter : MonoBehaviour
 		lastShotTime = Time.time;
 	}
 
-	void ShootBullet (Vector3 dir)
-	{
+	void ShootBullet (Vector3 dir) {
 		// create a new bullet
 		var bullet = (Bullet)Instantiate (weapon.bulletPrefab, transform.position, GetRotationFromDirection (dir));
 
@@ -166,8 +153,7 @@ public class Shooter : MonoBehaviour
 		bullet.damageMax = weapon.damageMax;
 	}
 
-	void OnDeath ()
-	{
+	void OnDeath () {
 		enabled = false;
 	}
 }

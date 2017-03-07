@@ -7,20 +7,17 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent (typeof(Collider))]
-public class ActivateOnEnter : MonoBehaviour
-{
+public class ActivateOnEnter : MonoBehaviour {
 	public GameObject toggledObject;
 	Player player;
 	ColorMixer colorMixer;
 
-	void Start ()
-	{
+	void Start () {
 		colorMixer = GetComponent<ColorMixer> ();
 	}
 
-	void OnTriggerEnter (Collider other)
-	{
-		if (toggledObject != null) {
+	void OnTriggerEnter (Collider other) {
+		if (toggledObject == null) {
 			return;
 		}
 		var triggerPlayer = other.GetComponent<Player> ();
@@ -36,9 +33,8 @@ public class ActivateOnEnter : MonoBehaviour
 		}
 	}
 
-	void OnTriggerExit (Collider other)
-	{
-		if (toggledObject != null) {
+	void OnTriggerExit (Collider other) {
+		if (toggledObject == null) {
 			return;
 		}
 		var triggerPlayer = other.GetComponent<Player> ();
