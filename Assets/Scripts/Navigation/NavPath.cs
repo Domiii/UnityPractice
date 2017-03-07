@@ -3,16 +3,13 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
-public class NavPath : MonoBehaviour
-{
-	public enum FollowDirection
-	{
+public class NavPath : MonoBehaviour {
+	public enum FollowDirection {
 		Forward,
 		Backward
 	}
 
-	public enum RepeatMode
-	{
+	public enum RepeatMode {
 		/// <summary>
 		/// Only follow the path once
 		/// </summary>
@@ -29,16 +26,14 @@ public class NavPath : MonoBehaviour
 		Mirror
 	}
 
-	public IEnumerator<Transform> GetPathEnumerator (FollowDirection direction)
-	{
+	public IEnumerator<Transform> GetPathEnumerator (FollowDirection direction) {
 		return direction == FollowDirection.Forward ? GetPathEnumeratorForward () : GetPathEnumeratorBackward ();
 	}
 
 	/// <summary>
 	/// Enumerates over all points
 	/// </summary>
-	public IEnumerator<Transform> GetPathEnumeratorForward ()
-	{
+	public IEnumerator<Transform> GetPathEnumeratorForward () {
 		for (var i = 0; i < transform.childCount; ++i) {
 			yield return transform.GetChild (i);
 		}
@@ -48,8 +43,7 @@ public class NavPath : MonoBehaviour
 	/// <summary>
 	/// Enumerates over all points
 	/// </summary>
-	public IEnumerator<Transform> GetPathEnumeratorBackward ()
-	{
+	public IEnumerator<Transform> GetPathEnumeratorBackward () {
 		for (var i = transform.childCount - 1; i >= 0; --i) {
 			yield return transform.GetChild (i);
 		}
@@ -66,8 +60,7 @@ public class NavPath : MonoBehaviour
 		}
 	}
 
-	public void OnDrawGizmos ()
-	{
+	public void OnDrawGizmos () {
 		if (transform.childCount < 2) {
 			return;
 		}

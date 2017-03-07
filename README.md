@@ -472,43 +472,6 @@ void OnTriggerEnter(Collider collider) {
 ``
   },
   {
-    name: 'Healthbar',
-    title_en: '',
-    refs: [{
-      name: 'Online step-by-step Healthbar tutorial',
-      href: 'https://www.youtube.com/watch?v=1lrkgdENfqM&list=PLX-uZVK_0K_402gTvjaP5mIE8p5PFI1HD'
-    }],
-    code: 
-`public Player unit;
-public Color goodColor;
-public Color badColor;
-
-Image image;
-
-void Reset() {
-  goodColor = Color.Lerp(Color.green, new Color(0,255,0,0), 0.6f);
-  badColor = Color.Lerp(Color.red, new Color(255,0,0,0), 0.6f);
-}
-
-void Start() {
-  image = GetComponent<Image> ();
-  if (image == null) {
-    var sprite = GetComponent<Sprite> ();
-  }
-}
-
-void Update() {
-  var ratio = unit.Health / unit.MaxHealth;
-
-  // set color
-  var color = Color.Lerp(badColor, goodColor, ratio);
-  image.color = color;
-
-  // set size
-  image.fillAmount = ratio;
-}`
-  },
-  {
     name: 'ColorOnCollision',
     title_en: '',
     code: 

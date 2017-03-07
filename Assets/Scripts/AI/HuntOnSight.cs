@@ -2,12 +2,11 @@
 using System.Collections;
 
 /// <summary>
-/// Attack given target when close enough; else move and catch up
+/// When any target comes into sight, will attack and hunt target.
 /// </summary>
 [RequireComponent (typeof(UnitAttacker))]
 [RequireComponent (typeof(NavMeshMover))]
-public class HuntOnSight : MonoBehaviour
-{
+public class HuntOnSight : MonoBehaviour {
 	UnitAttacker attacker;
 	NavMeshMover mover;
 
@@ -19,8 +18,7 @@ public class HuntOnSight : MonoBehaviour
 	}
 	#endregion
 
-	void Awake ()
-	{
+	void Awake () {
 		attacker = GetComponent<UnitAttacker> ();
 		attacker.attackOnSight = true;
 
@@ -28,8 +26,7 @@ public class HuntOnSight : MonoBehaviour
 		mover.stopMovingAtDestination = false;
 	}
 
-	void Update ()
-	{
+	void Update () {
 		if (attacker.IsCurrentValid) {
 			if (attacker.IsCurrentInRange) {
 				// keep attacking; also: make sure, we are not moving
@@ -41,15 +38,14 @@ public class HuntOnSight : MonoBehaviour
 			}
 		} else {
 			// no valid target
-			StopHunting();
+			StopHunting ();
 		}
 	}
 
 	/// <summary>
 	/// Called when finished hunting.
 	/// </summary>
-	void StopHunting ()
-	{
+	void StopHunting () {
 		attacker.StopAttack ();
 		mover.StopMove ();
 	}

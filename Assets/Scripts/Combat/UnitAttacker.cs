@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-[RequireComponent(typeof(Shooter))]
+[RequireComponent (typeof(Shooter))]
 public class UnitAttacker : MonoBehaviour {
 	public float attackRadius = 10.0f;
 	public bool attackOnSight = false;
@@ -10,18 +10,18 @@ public class UnitAttacker : MonoBehaviour {
 	Shooter shooter;
 	Collider[] collidersInRange;
 
-	void Awake() {
+	void Awake () {
 		shooter = GetComponent<Shooter> ();
 	}
 
-	void Update() {
+	void Update () {
 		if (attackOnSight) {
 			EnsureTarget ();
 		}
 		KeepAttackingCurrentTarget ();
 	}
 
-	void OnDeath() {
+	void OnDeath () {
 		enabled = false;
 	}
 
@@ -39,7 +39,7 @@ public class UnitAttacker : MonoBehaviour {
 
 	public bool IsCurrentValid {
 		get {
-			return currentTarget != null && IsValidTarget(currentTarget);
+			return currentTarget != null && IsValidTarget (currentTarget);
 		}
 	}
 
@@ -49,20 +49,20 @@ public class UnitAttacker : MonoBehaviour {
 		}
 	}
 
-	public bool IsInRange(Unit target) {
+	public bool IsInRange (Unit target) {
 		var dist = (target.transform.position - transform.position).sqrMagnitude;
 		return dist <= attackRadius * attackRadius;
 	}
 
-	public bool IsValidTarget(Unit target) {
+	public bool IsValidTarget (Unit target) {
 		return target.CanBeAttacked && FactionManager.AreHostile (gameObject, target.gameObject);
 	}
 
-	public bool CanAttack(Unit target) {
+	public bool CanAttack (Unit target) {
 		return IsInRange (target) && IsValidTarget (target);
 	}
 
-	bool KeepAttackingCurrentTarget() {
+	bool KeepAttackingCurrentTarget () {
 		if (CanAttackCurrentTarget) {
 			shooter.StartShootingAt (currentTarget.transform.position);
 			return true;
@@ -71,7 +71,7 @@ public class UnitAttacker : MonoBehaviour {
 		return false;
 	}
 
-	public bool StartAttack(Unit target) {
+	public bool StartAttack (Unit target) {
 		if (CanAttackCurrentTarget) {
 			StopAttack ();
 		}
@@ -84,27 +84,27 @@ public class UnitAttacker : MonoBehaviour {
 		return false;
 	}
 
-	public void StopAttack() {
+	public void StopAttack () {
 		shooter.StopShooting ();
 	}
 	#endregion
 
 
 	#region Finding Targets
-	public bool EnsureTarget() {
+	public bool EnsureTarget () {
 		// #1 keep attacking previous target.
 		// #2 if currently has no target: look for new target to attack
 		if (!CanAttackCurrentTarget && !FindNewTarget ()) {
 			// could not find a valid target -> Stop
-			StopAttack();
+			StopAttack ();
 			return false;
 		}
 		return true;
 	}
 
-	public bool FindNewTarget() {
+	public bool FindNewTarget () {
 		// find new target
-		var target = FindTarget();
+		var target = FindTarget ();
 
 		if (target != null) {
 			return StartAttack (target);
@@ -112,15 +112,15 @@ public class UnitAttacker : MonoBehaviour {
 		return false;
 	}
 
-	Unit FindTarget() {
+	Unit FindTarget () {
 		if (collidersInRange == null) {
 			collidersInRange = new Collider[128];
 		}
-		var nResults = Physics.OverlapSphereNonAlloc(transform.position, attackRadius, collidersInRange);
+		var nResults = Physics.OverlapSphereNonAlloc (transform.position, attackRadius, collidersInRange);
 		for (var i = 0; i < nResults; ++i) {
-			var collider = collidersInRange[i];
+			var collider = collidersInRange [i];
 			var unit = collider.GetComponent<Unit> ();
-			if (unit != null && IsValidTarget(unit)) {
+			if (unit != null && IsValidTarget (unit)) {
 				return unit;
 			}
 		}

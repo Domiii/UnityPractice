@@ -1,24 +1,18 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 [RequireComponent (typeof(Renderer))]
-public class ColorMixer : MonoBehaviour
-{
+public class ColorMixer : MonoBehaviour {
 	public float mixRatio = 0.5f;
 
 	Renderer ownRenderer;
 	Material originalMaterial;
 
-	void Start ()
-	{
+	void Start () {
 		ownRenderer = GetComponent<Renderer> ();
 		originalMaterial = new Material (ownRenderer.material);
-
 	}
 
-	public void MixColorWith (Renderer mixRenderer)
-	{
+	public void MixColorWith (Renderer mixRenderer) {
 		if (mixRenderer != null) {
 			var mat1 = mixRenderer.material;
 			var mat2 = ownRenderer.material;
@@ -26,8 +20,7 @@ public class ColorMixer : MonoBehaviour
 		}
 	}
 
-	public void ResetColor ()
-	{
+	public void ResetColor () {
 		// reset color
 		ownRenderer.material = originalMaterial;
 	}

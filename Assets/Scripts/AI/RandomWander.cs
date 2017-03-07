@@ -3,7 +3,7 @@ using System.Collections;
 using UnityEngine.AI;
 
 /// <summary>
-/// Just move around randomly
+/// Let's a NavMeshAgent wander/stroll/move around randomly.
 /// </summary>
 [RequireComponent(typeof(NavMeshMover))]
 [RequireComponent(typeof(NavMeshAgent))]

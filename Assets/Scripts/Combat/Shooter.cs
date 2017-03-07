@@ -1,7 +1,10 @@
 ﻿using UnityEngine;
-using System.Collections;
 using UnityEngine.AI;
 
+/// <summary>
+/// Shooter is used by other components to shoot stuff.
+/// Make sure to setup it's weapon first (especially the bulletPrefab)!
+/// </summary>
 public class Shooter : MonoBehaviour {
 	public WeaponConfig weapon = new WeaponConfig ();
 	public float turnSpeed = 1000.0f;
@@ -35,6 +38,40 @@ public class Shooter : MonoBehaviour {
 	public void StopShooting () {
 		IsAttacking = false;
 	}
+
+
+	public void ShootAt (Transform t) {
+		ShootAt (t.position);
+	}
+
+	public void ShootAt (Vector3 target) {
+		if (weapon == null || weapon.bulletPrefab == null) {
+			return;
+		}
+
+		if (weapon.bulletCount > 1) {
+			// shoot N bullets in a cone from -coneAngle/2 to +coneAngle/2
+			var dir = target - transform.position;
+			dir.Normalize ();
+			dir = Quaternion.Euler (0, -weapon.ConeAngle / 2, 0) * dir;
+
+			var deltaAngle = weapon.ConeAngle / (weapon.bulletCount - 1);
+
+			for (var i = 0; i < weapon.bulletCount; ++i) {
+				//dir.Normalize ();
+				ShootBullet (dir);
+				dir = Quaternion.Euler (0, deltaAngle, 0) * dir;
+
+			}
+		} else {
+			// just one bullet straight forward
+			ShootBullet (shootTransform.forward);
+		}
+
+		// reset shoot time
+		lastShotTime = Time.time;
+	}
+
 
 	void OnStartAttack () {
 	}
@@ -95,45 +132,12 @@ public class Shooter : MonoBehaviour {
 			return;
 		}
 
-		//transform.LookAt ();
 		var agent = GetComponent<NavMeshAgent> ();
 		if (agent != null) {
 			turnSpeed = agent.angularSpeed;
 		}
 		var targetRotation = GetRotationToward (currentTarget);
 		shootTransform.rotation = Quaternion.RotateTowards (shootTransform.rotation, targetRotation, Time.deltaTime * turnSpeed);
-	}
-
-	public void ShootAt (Transform t) {
-		ShootAt (t.position);
-	}
-
-	public void ShootAt (Vector3 target) {
-		if (weapon == null || weapon.bulletPrefab == null) {
-			return;
-		}
-
-		if (weapon.bulletCount > 1) {
-			// shoot N bullets in a cone from -coneAngle/2 to +coneAngle/2
-			var dir = target - transform.position;
-			dir.Normalize ();
-			dir = Quaternion.Euler (0, -weapon.ConeAngle / 2, 0) * dir;
-
-			var deltaAngle = weapon.ConeAngle / (weapon.bulletCount - 1);
-
-			for (var i = 0; i < weapon.bulletCount; ++i) {
-				//dir.Normalize ();
-				ShootBullet (dir);
-				dir = Quaternion.Euler (0, deltaAngle, 0) * dir;
-
-			}
-		} else {
-			// just one bullet straight forward
-			ShootBullet (shootTransform.forward);
-		}
-
-		// reset shoot time
-		lastShotTime = Time.time;
 	}
 
 	void ShootBullet (Vector3 dir) {

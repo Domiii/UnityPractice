@@ -2,8 +2,7 @@
 using System.Collections;
 
 [System.Serializable]
-public class WeaponConfig
-{
+public class WeaponConfig {
 	public Bullet bulletPrefab;
 	public float attackDelay = 0.2f;
 	public float damageMin = 10;
