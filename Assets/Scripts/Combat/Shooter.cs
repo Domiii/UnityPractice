@@ -18,25 +18,15 @@ public class Shooter : MonoBehaviour {
 		get {
 			return isAttacking;
 		}
-		set {
-			if (isAttacking != value) {
-				isAttacking = value;
-				if (isAttacking) {
-					OnStartAttack ();
-				} else {
-					OnStopAttack ();
-				}
-			}
-		}
 	}
 
 	public void StartShootingAt (Vector3 target) {
 		currentTarget = target;
-		IsAttacking = true;
+		isAttacking = true;
 	}
 
 	public void StopShooting () {
-		IsAttacking = false;
+		isAttacking = false;
 	}
 
 
@@ -70,14 +60,6 @@ public class Shooter : MonoBehaviour {
 
 		// reset shoot time
 		lastShotTime = Time.time;
-	}
-
-
-	void OnStartAttack () {
-	}
-
-	void OnStopAttack () {
-		//lastShotTime = Time.time;
 	}
 
 	void Awake () {
