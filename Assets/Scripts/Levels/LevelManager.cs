@@ -127,7 +127,6 @@ public class LevelManager : MonoBehaviour {
 
 	public void GotoLevel (string level) {
 		//OnLevelStart ();
-		print(level);
 		SceneManager.LoadScene (level);
 	}
 }

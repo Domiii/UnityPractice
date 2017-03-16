@@ -19,7 +19,7 @@ public class Player : MonoBehaviour
 	}
 
 	// this function is primarly called when Unit dies: SendMessage ("OnDeath"...)
-	void OnDeath ()
+	void OnDeath (DamageInfo damageInfo = null)
 	{
 		// reset scene!
 		Scene scene = SceneManager.GetActiveScene (); 

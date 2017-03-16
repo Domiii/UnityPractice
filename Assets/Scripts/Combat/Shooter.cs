@@ -139,7 +139,7 @@ public class Shooter : MonoBehaviour {
 		bullet.damageMax = weapon.damageMax;
 	}
 
-	void OnDeath () {
+	void OnDeath (DamageInfo damageInfo) {
 		enabled = false;
 	}
 }

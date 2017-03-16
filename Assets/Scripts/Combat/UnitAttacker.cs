@@ -21,7 +21,7 @@ public class UnitAttacker : MonoBehaviour {
 		KeepAttackingCurrentTarget ();
 	}
 
-	void OnDeath () {
+	void OnDeath (DamageInfo damageInfo) {
 		enabled = false;
 	}
 

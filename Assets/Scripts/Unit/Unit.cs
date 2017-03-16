@@ -21,12 +21,12 @@ public class Unit : MonoBehaviour {
 		}
 	}
 
-	void Die (float damagePoints) {
+	void Die (DamageInfo damageInfo) {
 		health = 0;
 		isInvulnerable = false;
 
 		// notify other components on this object about its death
-		SendMessage ("OnDeath", SendMessageOptions.DontRequireReceiver);
+		SendMessage ("OnDeath", damageInfo, SendMessageOptions.DontRequireReceiver);
 
 		// destroy on death
 		Destroy (gameObject);
@@ -40,16 +40,19 @@ public class Unit : MonoBehaviour {
 	}
 
 	public void Damage (float damagePoints) {
+	}
+
+	public void Damage (DamageInfo damageInfo) {
 		if (!CanBeAttacked) {
 			// cannot be attacked right now
 			return;
 		}
     
-		health -= damagePoints;
+		health -= damageInfo.damage;
     
 		if (!IsAlive) {
 			// died from damage
-			Die (damagePoints);
+			Die (damageInfo);
 		}
 	}
 	#endregion
