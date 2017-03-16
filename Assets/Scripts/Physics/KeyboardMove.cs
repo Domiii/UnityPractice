@@ -8,8 +8,7 @@ using UnityEngine;
 
 [RequireComponent (typeof(Rigidbody))]
 [RequireComponent (typeof(HasSpeed))]
-public class KeyboardMove : MonoBehaviour
-{
+public class KeyboardMove : MonoBehaviour {
 	public float jumpStrength = 9;
 
 	public CollisionCounter groundCollisionCounter;
@@ -17,14 +16,16 @@ public class KeyboardMove : MonoBehaviour
 	HasSpeed hasSpeed;
 	Rigidbody body;
 
-	void Start ()
-	{
+	void Start () {
 		hasSpeed = GetComponent<HasSpeed> ();
 		body = GetComponent<Rigidbody> ();
 	}
 
-	void FixedUpdate ()
-	{
+	void FixedUpdate () {
+		if (!PlayerInputManager.Instance.IsDefaultGameInputEnabled) {
+			return;
+		}
+
 		var v = body.velocity; 
 		v.x = Input.GetAxis ("Horizontal") * hasSpeed.speed;
 		v.z = Input.GetAxis ("Vertical") * hasSpeed.speed;

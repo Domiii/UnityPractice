@@ -2,11 +2,25 @@
 using UnityEngine.SceneManagement;
 using System.Collections.Generic;
 
+/// <summary>
+/// This is a singleton class: Only one object of it ever exists.
+/// You can add it to an empty GameObject called "LevelManager".
+/// The levels array contains the names of all level scenes.
+/// Make sure to also add them to the build settings before building.
+/// 
+/// Usually the LevelManager is used by the LevelMenu to switch between levels.
+/// The LevelManager also uses PlayerPrefs to store level progress to file.
+/// Furthermore, it offers methods to display a canvas when a level has been won or lost.
+/// 
+/// Once created, the LevelManagerEditor will provide an option to automatically add all
+/// scenes that have a name starting with levelPrefix to the levels array.
+/// </summary>
 public class LevelManager : MonoBehaviour {
 	public string mainMenuScene = "MainMenu";
 	public string[] levels;
 	public Canvas wonDisplay;
 	public Canvas lostDisplay;
+	public string levelPrefix = "level";
 
 	public static LevelManager Instance {
 		get;
@@ -113,6 +127,7 @@ public class LevelManager : MonoBehaviour {
 
 	public void GotoLevel (string level) {
 		//OnLevelStart ();
+		print(level);
 		SceneManager.LoadScene (level);
 	}
 }

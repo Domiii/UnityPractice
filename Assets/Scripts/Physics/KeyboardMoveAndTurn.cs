@@ -4,8 +4,7 @@ using UnityEngine;
 
 [RequireComponent (typeof(Rigidbody))]
 [RequireComponent (typeof(HasSpeed))]
-public class KeyboardMoveAndTurn : MonoBehaviour
-{
+public class KeyboardMoveAndTurn : MonoBehaviour {
 	public float rotationSpeed = 180;
 	public float jumpStrength = 9;
 	public CollisionCounter groundCollisionCounter;
@@ -16,14 +15,15 @@ public class KeyboardMoveAndTurn : MonoBehaviour
 	float moveRotation, moveForward;
 	public bool jumping;
 
-	void Start ()
-	{
+	void Start () {
 		hasSpeed = GetComponent<HasSpeed> ();
 		body = GetComponent<Rigidbody> ();
 	}
 
-	void Update ()
-	{
+	void Update () {
+		if (!PlayerInputManager.Instance.IsDefaultGameInputEnabled) {
+			return;
+		}
 		// get input in Update()
 		moveRotation = Input.GetAxisRaw ("Horizontal");
 		moveForward = Input.GetAxis ("Vertical");
@@ -33,22 +33,22 @@ public class KeyboardMoveAndTurn : MonoBehaviour
 		}
 	}
 
-	void FixedUpdate ()
-	{
+	void FixedUpdate () {
+		if (!PlayerInputManager.Instance.IsDefaultGameInputEnabled) {
+			return;
+		}
 		// update physics in FixedUpdate()
 
 		UpdateDirection ();
 		UpdateVelocity ();
 	}
 
-	void UpdateDirection ()
-	{
+	void UpdateDirection () {
 		// rotate
 		transform.Rotate (Vector3.up, rotationSpeed * moveRotation * Time.fixedDeltaTime, Space.World);
 	}
 
-	void UpdateVelocity ()
-	{
+	void UpdateVelocity () {
 		// compute forward direction
 		var forward = transform.forward;
 		forward.y = 0;
