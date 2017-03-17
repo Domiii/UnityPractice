@@ -65,8 +65,12 @@ public class NavPath : MonoBehaviour {
 			return;
 		}
 
+		Gizmos.color = Color.yellow;
 		for (var i = 1; i < transform.childCount; ++i) {
 			Gizmos.DrawLine (transform.GetChild (i - 1).position, transform.GetChild (i % transform.childCount).position);
 		}
+
+		Gizmos.color = Color.gray;
+		Gizmos.DrawLine (transform.GetChild(transform.childCount-1).position, transform.GetChild(0).position);
 	}
 }
