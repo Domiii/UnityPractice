@@ -1,8 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class Bullet : MonoBehaviour
-{
+public class Bullet : MonoBehaviour {
 	//public GameObject owner;
 	public float speed = 10;
 	public bool destroyOnCollision = false;
@@ -11,14 +10,12 @@ public class Bullet : MonoBehaviour
 
 	bool isDestroyed = false;
 
-	void Start ()
-	{
+	void Start () {
 		Destroy (gameObject, 10);		// destroy after at most 10 seconds
 	}
 
-	void OnTriggerEnter (Collider col)
-	{
-		var target = col.gameObject.GetComponent<Unit> ();
+	void OnTriggerEnter (Collider col) {
+		var target = Unit.GetUnit(col.gameObject);
 		if (!isDestroyed && target != null) {
 			// when colliding with Unit -> Check if we can attack the Unit
 			if (target.CanBeAttacked && FactionManager.AreHostile (gameObject, target.gameObject)) {
@@ -32,17 +29,15 @@ public class Bullet : MonoBehaviour
 		}
 	}
 
-	void DamageTarget (Unit target)
-	{
+	void DamageTarget (Unit target) {
 		// damage the unit!
 		//var damageInfo = ObjectManager.Instance.Obtain<DamageInfo> ();
 		var damage = Random.Range (damageMin, damageMax);
-		target.Damage (damage);
+		target.Damage (damage, FactionManager.GetFactionType(gameObject));
 		DestroyThis ();
 	}
 
-	void DestroyThis ()
-	{
+	void DestroyThis () {
 		Destroy (gameObject);
 		isDestroyed = true;
 	}

@@ -1,17 +1,22 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+/// <summary>
+/// Automatically attacks nearby enemies, using a Shooter component.
+/// </summary>
 [RequireComponent (typeof(Shooter))]
+[RequireComponent(typeof(AttackTargetFinder))]
 public class UnitAttacker : MonoBehaviour {
 	public float attackRadius = 10.0f;
 	public bool attackOnSight = false;
 
 	Unit currentTarget;
 	Shooter shooter;
-	Collider[] collidersInRange;
+	AttackTargetFinder targetFinder;
 
 	void Awake () {
 		shooter = GetComponent<Shooter> ();
+		targetFinder = GetComponent<AttackTargetFinder> ();
 	}
 
 	void Update () {
@@ -39,7 +44,7 @@ public class UnitAttacker : MonoBehaviour {
 
 	public bool IsCurrentValid {
 		get {
-			return currentTarget != null && IsValidTarget (currentTarget);
+			return currentTarget != null && targetFinder.IsValidTarget (currentTarget);
 		}
 	}
 
@@ -50,21 +55,34 @@ public class UnitAttacker : MonoBehaviour {
 	}
 
 	public bool IsInRange (Unit target) {
-		var dist = (target.transform.position - transform.position).sqrMagnitude;
-		return dist <= attackRadius * attackRadius;
-	}
+		var collider = target.GetComponent<Collider> ();
+		if (!collider) {
+			collider = target.GetComponentInChildren<Collider> ();
+		}
 
-	public bool IsValidTarget (Unit target) {
-		return target.CanBeAttacked && FactionManager.AreHostile (gameObject, target.gameObject);
+		Vector3 targetPos;
+		if (collider != null) {
+			targetPos = collider.ClosestPointOnBounds (transform.position);
+		} else {
+			targetPos = target.transform.position;
+		}
+
+		var distSq = (targetPos - transform.position).sqrMagnitude;
+		//print (Vector3.Distance(targetPos, transform.position));
+		return distSq <= attackRadius * attackRadius;
 	}
 
 	public bool CanAttack (Unit target) {
-		return IsInRange (target) && IsValidTarget (target);
+		return IsInRange (target) && targetFinder.IsValidTarget (target);
+	}
+
+	void AttackCurrentTargetUnchecked() {
+		shooter.StartShootingAt (currentTarget.transform.position);
 	}
 
 	bool KeepAttackingCurrentTarget () {
 		if (CanAttackCurrentTarget) {
-			shooter.StartShootingAt (currentTarget.transform.position);
+			AttackCurrentTargetUnchecked ();
 			return true;
 		}
 		StopAttack ();
@@ -78,7 +96,7 @@ public class UnitAttacker : MonoBehaviour {
 
 		currentTarget = target;
 		if (CanAttackCurrentTarget) {
-			shooter.StartShootingAt (target.transform.position);
+			AttackCurrentTargetUnchecked ();
 			return true;
 		}
 		return false;
@@ -87,10 +105,7 @@ public class UnitAttacker : MonoBehaviour {
 	public void StopAttack () {
 		shooter.StopShooting ();
 	}
-	#endregion
 
-
-	#region Finding Targets
 	public bool EnsureTarget () {
 		// #1 keep attacking previous target.
 		// #2 if currently has no target: look for new target to attack
@@ -104,29 +119,13 @@ public class UnitAttacker : MonoBehaviour {
 
 	public bool FindNewTarget () {
 		// find new target
-		var target = FindTarget ();
+		var target = targetFinder.FindTarget (attackRadius);
 
 		if (target != null) {
-			return StartAttack (target);
+			StartAttack (target);
+			return true;
 		}
 		return false;
-	}
-
-	Unit FindTarget () {
-		if (collidersInRange == null) {
-			collidersInRange = new Collider[128];
-		}
-		var nResults = Physics.OverlapSphereNonAlloc (transform.position, attackRadius, collidersInRange);
-		for (var i = 0; i < nResults; ++i) {
-			var collider = collidersInRange [i];
-			var unit = collider.GetComponent<Unit> ();
-			if (unit != null && IsValidTarget (unit)) {
-				return unit;
-			}
-		}
-
-		// no valid target found
-		return null;
 	}
 	#endregion
 }

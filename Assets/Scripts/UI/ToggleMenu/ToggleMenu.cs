@@ -10,6 +10,10 @@ using System.Collections;
 public class ToggleMenu : MenuBuilder<ToggleButton> {
 	public GameObject toggleObjectsContainer;
 
+	void Start() {
+		BuildMenu ();
+	}
+
 	public void BuildMenu() {
 		var t = toggleObjectsContainer.transform;
 		var toggleObjects = new GameObject[t.childCount];

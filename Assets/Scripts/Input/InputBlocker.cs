@@ -8,9 +8,9 @@ using UnityEngine;
 /// </summary>
 public class InputBlocker : MonoBehaviour {
 	void Start() {
-		if (gameObject.activeSelf) {
-			PlayerInputManager.Instance.AddGameInputBlocker ();
-		}
+//		if (gameObject.activeSelf) {
+//			PlayerInputManager.Instance.AddGameInputBlocker ();
+//		}
 	}
 
 	void OnEnable() {

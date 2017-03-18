@@ -11,7 +11,7 @@ public class Shooter : MonoBehaviour {
 	public Transform shootTransform;
 
 	Vector3 currentTarget;
-	float lastShotTime;
+	float lastShotTime = -10000;
 	bool isAttacking;
 
 	public bool IsAttacking {

@@ -7,8 +7,7 @@ using UnityEngine.AI;
 
 [RequireComponent (typeof(NavMeshMover))]
 [RequireComponent (typeof(NavMeshAgent))]
-public class NavMeshPathFollower : MonoBehaviour
-{
+public class NavMeshPathFollower : MonoBehaviour {
 	public NavPath path;
 	public NavPath.FollowDirection direction;
 	public NavPath.RepeatMode mode;
@@ -19,8 +18,7 @@ public class NavMeshPathFollower : MonoBehaviour
 
 	#region Public
 
-	public void SetPath (NavPath path, NavPath.FollowDirection pathDirection = NavPath.FollowDirection.Forward, NavPath.RepeatMode mode = NavPath.RepeatMode.Once)
-	{
+	public void SetPath (NavPath path, NavPath.FollowDirection pathDirection = NavPath.FollowDirection.Forward, NavPath.RepeatMode mode = NavPath.RepeatMode.Once) {
 		Debug.Assert (path != null);
 
 		this.path = path;
@@ -30,8 +28,7 @@ public class NavMeshPathFollower : MonoBehaviour
 		RestartPath ();
 	}
 
-	public void RestartPath ()
-	{
+	public void RestartPath () {
 		if (path != null) {
 			pathIterator = path.GetPathEnumerator (direction);
 			pathIterator.MoveNext ();
@@ -41,20 +38,17 @@ public class NavMeshPathFollower : MonoBehaviour
 	#endregion
 
 
-	void Start ()
-	{
+	void Start () {
 		mover = GetComponent<NavMeshMover> ();
 		mover.stopMovingAtDestination = true;
 		RestartPath ();
 	}
 
-	void Update ()
-	{
+	void Update () {
 		MoveAlongPath ();
 	}
 
-	void MoveAlongPath ()
-	{
+	void MoveAlongPath () {
 		if (pathIterator == null || pathIterator.Current == null)
 			return;
 
@@ -62,34 +56,47 @@ public class NavMeshPathFollower : MonoBehaviour
 		mover.CurrentDestination = pathIterator.Current.position;
 	}
 
-	void OnStartMove ()
-	{
+	void OnStartMove () {
 	}
 
-	void OnStopMove ()
-	{
-		pathIterator.MoveNext ();
-		//print ("Next Waypoint: " + pathIterator.Current);
+	void OnStopMove (bool hasArrived) {
+		if (pathIterator == null) {
+			//mover.StopMove ();
+			return;
+		}
 
-		if (pathIterator.Current == null) {
-			// finished path once
-			switch (mode) {
-			case NavPath.RepeatMode.Once:
-				// done!
-				break;
-			case NavPath.RepeatMode.Mirror:
-				// reverse direction and walk back
-				direction = direction == NavPath.FollowDirection.Forward ? NavPath.FollowDirection.Backward : NavPath.FollowDirection.Forward;
-				RestartPath ();
-				MoveAlongPath ();
-				break;
-			case NavPath.RepeatMode.Repeat:
-				// start from the beginning
-				RestartPath ();
-				MoveAlongPath ();
-				break;
+		if (hasArrived) {
+			// start moving toward next waypoint!
+			pathIterator.MoveNext ();
+
+			//print ("Next Waypoint: " + pathIterator.Current);
+
+			// check if we arrived at final waypoint
+			if (pathIterator.Current == null) {
+				// finished path once
+				switch (mode) {
+					case NavPath.RepeatMode.Once:
+					// done!
+						mover.StopMove ();
+						break;
+					case NavPath.RepeatMode.Mirror:
+					// reverse direction and walk back
+						direction = direction == NavPath.FollowDirection.Forward ? NavPath.FollowDirection.Backward : NavPath.FollowDirection.Forward;
+						RestartPath ();
+						MoveAlongPath ();
+						break;
+					case NavPath.RepeatMode.Repeat:
+					// start from the beginning
+						RestartPath ();
+						MoveAlongPath ();
+						break;
+				}
 			}
 		}
+	}
+
+	void OnDisable() {
+		mover.StopMove ();
 	}
 }
 

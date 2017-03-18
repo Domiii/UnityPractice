@@ -8,11 +8,12 @@ public class WaveGenerator : MonoBehaviour {
 	/// <summary>
 	/// Time between waves in seconds.
 	/// </summary>
-	public float DelayBetweenWaves = 30;
+	public float delayBetweenWaves = 30;
 	public NavPath path;
 	public NavPath.FollowDirection pathDirection;
-	public WaveTemplate[] WaveTemplates;
-	public Text InfoText;
+	public NavPath.RepeatMode pathMode = NavPath.RepeatMode.Once;
+	public WaveTemplate[] waveTemplates;
+	public Text infoText;
 
 	List<Wave> waves;
 
@@ -35,11 +36,11 @@ public class WaveGenerator : MonoBehaviour {
 	/// </summary>
 	public WaveTemplate NextWaveTemplate {
 		get {
-			if (WaveTemplates.Length <= waves.Count) {
+			if (waveTemplates.Length <= waves.Count) {
 				// already spawned all waves
 				return null;
 			}
-			return WaveTemplates[waves.Count];
+			return waveTemplates[waves.Count];
 		}
 	}
 
@@ -50,17 +51,17 @@ public class WaveGenerator : MonoBehaviour {
 	}
 
 	void ShowText(string text) {
-		if (InfoText != null) {
-			InfoText.text = text;
+		if (infoText != null) {
+			infoText.text = text;
 		}
 	}
 
 	// Use this for initialization
 	void Start () {
-		if (WaveTemplates == null || WaveTemplates.Length == 0) {
+		if (waveTemplates == null || waveTemplates.Length == 0) {
 			Debug.LogError("WaveTemplates are empty");
 		}
-		if (WaveTemplates == null || WaveTemplates.Length == 0) {
+		if (waveTemplates == null || waveTemplates.Length == 0) {
 			Debug.LogError("WavePath is not set");
 		}
 
@@ -88,9 +89,9 @@ public class WaveGenerator : MonoBehaviour {
 		var now = Time.time;
 		var timeSinceLastUpdate = now - lastUpdate;
 
-		ShowText("Next wave: " + CurrentWaveNumber + " (" + (DelayBetweenWaves - timeSinceLastUpdate).ToString ("0") + "s)");
+		ShowText("Next wave: " + CurrentWaveNumber + " (" + (delayBetweenWaves - timeSinceLastUpdate).ToString ("0") + "s)");
 		
-		if (timeSinceLastUpdate >= DelayBetweenWaves) {
+		if (timeSinceLastUpdate >= delayBetweenWaves) {
 			StartNextWave ();
 		}
 	}
@@ -109,7 +110,7 @@ public class WaveGenerator : MonoBehaviour {
 
 		// create new wave
 		var wave = new Wave (this);
-		wave.WaveTemplate = NextWaveTemplate;
+		wave.waveTemplate = NextWaveTemplate;
 		waves.Add (wave);
 
 		// spawn first enemy in new wave
@@ -119,16 +120,17 @@ public class WaveGenerator : MonoBehaviour {
 	}
 	
 	// start next enemy of given wave
-	public void SpawnNextEnemy(Wave wave) {
-		var followerObj = (GameObject)Instantiate (wave.WaveTemplate.EnemyPrefab, transform.position, Quaternion.identity);
-		var follower = followerObj.GetComponent<NavMeshPathFollower> ();
-		follower.path = wave.WaveGenerator.path;
-		follower.direction = wave.WaveGenerator.pathDirection;
+	public void SpawnNextNPC(Wave wave) {
+		var npcGO = (GameObject)Instantiate (wave.waveTemplate.npcPrefab, transform.position, transform.rotation);
+		var npc = npcGO.GetComponent<NavMeshPathFollower> ();
+		npc.path = path;
+		npc.direction = pathDirection;
+		npc.mode = pathMode;
 
-		wave.Enemies.Add (follower);
+		wave.npcs.Add (npc);
 
-		// add faction
-		FactionManager.SetFaction (followerObj, gameObject);
+		// add faction of WaveGenerator to new NPC
+		FactionManager.SetFaction (npcGO, gameObject);
 
 //		// set color
 //		var renderer = GetComponent<SpriteRenderer> ();

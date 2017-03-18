@@ -34,12 +34,15 @@ public class Unit : MonoBehaviour {
 	#endregion
 
 	#region Damage
-	public void Kill () {
-		// no health left after this!
-		Damage (health);
+	public void Kill (FactionType sourceFactionType) {
+		if (CanBeAttacked) {
+			// no health left after this!
+			Die (new DamageInfo { damage = health, sourceFactionType = sourceFactionType });
+		}
 	}
 
-	public void Damage (float damagePoints) {
+	public void Damage (float damagePoints, FactionType sourceFactionType) {
+		Damage (new DamageInfo { damage = damagePoints, sourceFactionType = sourceFactionType });
 	}
 
 	public void Damage (DamageInfo damageInfo) {
@@ -56,6 +59,26 @@ public class Unit : MonoBehaviour {
 		}
 	}
 	#endregion
+
+
+	public static Unit GetUnit<C>(C component) 
+		where C : Component
+	{
+		return GetUnit (component.gameObject);
+	}
+		
+	/// <summary>
+	/// Helper method to get the Unit component of the given GO or its ancestors.
+	/// </summary>
+	public static Unit GetUnit(GameObject go) {
+		// check if the given object is a Unit
+		var unit = go.GetComponent<Unit>();
+		if (unit == null && go.transform.parent != null) {
+			// check faction type of parent (and recurse through all ancestors)
+			unit = GetUnit(go.transform.parent.gameObject);
+		}
+		return unit;
+	}
 }
 
 

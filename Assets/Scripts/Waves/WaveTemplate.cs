@@ -5,7 +5,7 @@ using System;
 
 [Serializable]
 public class WaveTemplate {
-	public float DelayBetweenEnemies = 0.5f;
-	public GameObject EnemyPrefab;
-	public int Amount;
+	public float delayBetweenNPCs = 0.5f;
+	public GameObject npcPrefab;
+	public int amount;
 }

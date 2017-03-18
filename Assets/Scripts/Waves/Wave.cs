@@ -3,44 +3,46 @@ using System.Collections;
 using System.Collections.Generic;
 using System;
 
-
+/// <summary>
+/// A single wave of NPCs. Spawns a new NPC
+/// </summary>
 [Serializable]
 public class Wave {
-	public WaveGenerator WaveGenerator;
-	public WaveTemplate WaveTemplate;
+	public WaveGenerator waveGenerator;
+	public WaveTemplate waveTemplate;
 
 	/// <summary>
 	/// The set of enemies attacking this round.
 	/// </summary>
-	public List<NavMeshPathFollower> Enemies = new List<NavMeshPathFollower>();
+	public List<NavMeshPathFollower> npcs = new List<NavMeshPathFollower>();
 
 	float lastUpdate;
 
 	public Wave(WaveGenerator waveGenerator) {
-		WaveGenerator = waveGenerator;
+		this.waveGenerator = waveGenerator;
 	}
 
-	public bool HaveAllEnemiesSpawned {
+	public bool HaveAllNPCsSpawned {
 		get {
 			// we have spawned the total amount of enemies planned for this wave
-			return Enemies.Count >= WaveTemplate.Amount;
+			return npcs.Count >= waveTemplate.amount;
 		}
 	}
 	
 	
 	// Use this for initialization
 	public void Start () {
-		WaveGenerator.SpawnNextEnemy(this);
+		waveGenerator.SpawnNextNPC(this);
 		ResetTimer ();
 	}
 
 	public void Update() {
-		if (!HaveAllEnemiesSpawned) {
+		if (!HaveAllNPCsSpawned) {
 			var now = Time.time;
 			var timeSinceLastUpdate = now - lastUpdate;
 			
-			if (timeSinceLastUpdate >= WaveTemplate.DelayBetweenEnemies) {
-				WaveGenerator.SpawnNextEnemy(this);
+			if (timeSinceLastUpdate >= waveTemplate.delayBetweenNPCs) {
+				waveGenerator.SpawnNextNPC(this);
 				ResetTimer ();
 			}
 		}

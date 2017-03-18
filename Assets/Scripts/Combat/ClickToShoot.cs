@@ -13,7 +13,7 @@ public class ClickToShoot : MonoBehaviour {
 	}
 
 	void Update () {
-		if (!PlayerInputManager.Instance.IsDefaultGameInputEnabled) {
+		if (!PlayerInputManager.Instance.CanGameReceiveClick) {
 			_StopShooting ();
 		}
 		else if (Input.GetMouseButton (0)) {

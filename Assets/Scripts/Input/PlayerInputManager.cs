@@ -1,6 +1,6 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
+using UnityEngine.UI;
+using UnityEngine.EventSystems;
 
 public class PlayerInputManager : MonoBehaviour {
 	public static PlayerInputManager Instance {
@@ -10,8 +10,21 @@ public class PlayerInputManager : MonoBehaviour {
 
 	public int nInputBlockers = 0;
 
-	public PlayerInputManager() {
+	public PlayerInputManager () {
 		Instance = this;
+	}
+
+	/// <summary>
+	/// Player in-game actions through clicks should be ignored if:
+	/// (1) player is currently in a menu or otherwise blocking default game input
+	/// (2) player pressed a button somewhere on the interface
+	/// </summary>
+	public bool CanGameReceiveClick {
+		get {
+			var currentSelectedObj = EventSystem.current.currentSelectedGameObject;
+			return IsDefaultGameInputEnabled &&
+				(!currentSelectedObj);
+		}
 	}
 
 	public bool IsDefaultGameInputEnabled {
@@ -20,11 +33,11 @@ public class PlayerInputManager : MonoBehaviour {
 		}
 	}
 
-	public void AddGameInputBlocker() {
+	public void AddGameInputBlocker () {
 		++nInputBlockers;
 	}
 
-	public void RemoveGameInputBlocker() {
+	public void RemoveGameInputBlocker () {
 		--nInputBlockers;
 	}
 }

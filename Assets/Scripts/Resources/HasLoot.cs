@@ -7,7 +7,7 @@ public class HasLoot : MonoBehaviour {
 	private Text lootText;
 
 	void OnDeath (DamageInfo damageInfo) {
-		var faction = CurrencyManager.Instance.GetWallet (damageInfo.SourceFactionType);
+		var faction = CurrencyManager.Instance.GetWallet (damageInfo.sourceFactionType);
 		if (faction != null) {
 			// give credits to killer
 			var lootCredits = Random.Range (minLootCredits, maxLootCredits);

@@ -10,5 +10,5 @@ public class DamageInfo {
 	/// <summary>
 	/// The faction of the attacker (or other kind of source of damage)
 	/// </summary>
-	public FactionType SourceFactionType;
+	public FactionType sourceFactionType;
 }

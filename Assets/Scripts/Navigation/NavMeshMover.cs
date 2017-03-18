@@ -5,8 +5,7 @@ using UnityEngine.AI;
 
 [RequireComponent (typeof(NavMeshAgent))]
 [RequireComponent (typeof(HasSpeed))]
-public class NavMeshMover : MonoBehaviour
-{
+public class NavMeshMover : MonoBehaviour {
 	public bool stopMovingAtDestination = false;
 
 	NavMeshAgent agent;
@@ -40,8 +39,7 @@ public class NavMeshMover : MonoBehaviour
 		}
 	}
 
-	public void StopMove ()
-	{ 
+	public void StopMove () { 
 		if (isMoving) {
 			isMoving = false;
 			agent.Stop ();
@@ -51,8 +49,7 @@ public class NavMeshMover : MonoBehaviour
 
 	#endregion
 
-	void StartMove ()
-	{
+	void StartMove () {
 		HasArrived = false;	
 		if (!isMoving) {
 			startedMovingFlag = false;
@@ -62,31 +59,26 @@ public class NavMeshMover : MonoBehaviour
 		}
 	}
 
-	void Awake ()
-	{
+	void Awake () {
 		agent = GetComponent<NavMeshAgent> ();
 		hasSpeed = GetComponent<HasSpeed> ();
 	}
 
-	protected void NotifyOnStartMove ()
-	{
+	protected void NotifyOnStartMove () {
 		SendMessage ("OnStartMove", SendMessageOptions.DontRequireReceiver);
 	}
 
-	protected void NotifyOnStopMove ()
-	{
-		SendMessage ("OnStopMove", SendMessageOptions.DontRequireReceiver);
+	protected void NotifyOnStopMove () {
+		SendMessage ("OnStopMove", HasArrived, SendMessageOptions.DontRequireReceiver);
 	}
 
-	void FixedUpdate ()
-	{
+	void FixedUpdate () {
 		// always set agent speed to HasSpeed's speed
 		// (so we can control all speed through HasSpeed)
 		agent.speed = hasSpeed.speed;
 	}
 
-	void LateUpdate ()
-	{
+	void LateUpdate () {
 		if (isMoving) {
 			if (!startedMovingFlag) {
 				// hackfix: during the first update cycle after assigning a target, remainingDistance is still 0!
