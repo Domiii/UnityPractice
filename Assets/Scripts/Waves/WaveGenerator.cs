@@ -8,7 +8,7 @@ public class WaveGenerator : MonoBehaviour {
 	/// <summary>
 	/// Time between waves in seconds.
 	/// </summary>
-	public float delayBetweenWaves = 30;
+	public float delayBetweenWaves = 10;
 	public NavPath path;
 	public NavPath.FollowDirection pathDirection;
 	public NavPath.RepeatMode pathMode = NavPath.RepeatMode.Once;
