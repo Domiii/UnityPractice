@@ -31,6 +31,8 @@
 
 ### Some missing scripts
 
+// TODO: ObjectTracker + Arrows
+//  -> https://github.com/Domiii/UnityBoxes/tree/master/Assets/Scripts/Tracking
 
 // TODO: LevelManager
 
@@ -467,7 +469,7 @@ void OnTriggerEnter(Collider collider) {
   },
   {
     name: 'MoveWithTarget',
-    title_en: 'First add empty object (a "mount") exactly onto the target object. Then add this component to the "mount" object. Finally, add any objects you want it to follow (e.g. camera) as children to "mount".',
+    title_en: '',
     code: 
 ``
   },

@@ -119,12 +119,12 @@ public class Shooter : MonoBehaviour {
 			turnSpeed = agent.angularSpeed;
 		}
 		var targetRotation = GetRotationToward (currentTarget);
-		shootTransform.rotation = Quaternion.RotateTowards (shootTransform.rotation, targetRotation, Time.deltaTime * turnSpeed);
+		transform.rotation = Quaternion.RotateTowards (transform.rotation, targetRotation, Time.deltaTime * turnSpeed);
 	}
 
 	void ShootBullet (Vector3 dir) {
 		// create a new bullet
-		var bullet = (Bullet)Instantiate (weapon.bulletPrefab, transform.position, GetRotationFromDirection (dir));
+		var bullet = (Bullet)Instantiate (weapon.bulletPrefab, shootTransform.position, GetRotationFromDirection (dir));
 
 		// set bullet faction
 		FactionManager.SetFaction (bullet.gameObject, gameObject);
