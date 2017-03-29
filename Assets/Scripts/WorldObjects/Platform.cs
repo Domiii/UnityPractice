@@ -2,16 +2,21 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// A platform transports any root object that has feet.
+/// </summary>
 public class Platform : MonoBehaviour {
-	public float speed = 5;
+	public float speed = 10;
+	public float waitAtNodeTime = 3;
 	public NavPath path;
 	public NavPath.FollowDirection direction;
 	public NavPath.RepeatMode mode = NavPath.RepeatMode.Repeat;
 
 	IEnumerator<Transform> pathIterator;
+	bool waiting = false;
+
 
 	#region Public
-
 	public void SetPath (NavPath path, NavPath.FollowDirection pathDirection = NavPath.FollowDirection.Forward, NavPath.RepeatMode mode = NavPath.RepeatMode.Once) {
 		Debug.Assert (path != null);
 
@@ -26,9 +31,39 @@ public class Platform : MonoBehaviour {
 		if (path != null) {
 			pathIterator = path.GetPathEnumerator (direction);
 			pathIterator.MoveNext ();
+
+			if (HasArrived) {
+				NextWaypoint ();
+			}
 		}
 	}
 
+	public bool IsValid {
+		get {
+			return pathIterator != null && pathIterator.Current != null;
+		}
+	}
+
+	public Vector3 DistanceToTarget {
+		get {
+			return pathIterator.Current.position - transform.position;
+		}
+	}
+
+	public float DeltaPerTick {
+		get {
+			return speed * Time.fixedDeltaTime;
+		}
+	}
+
+	public bool HasArrived {
+		get {
+			if (!IsValid) {
+				return false;
+			}
+			return DistanceToTarget.sqrMagnitude < DeltaPerTick * DeltaPerTick;
+		}
+	}
 	#endregion
 
 
@@ -37,31 +72,35 @@ public class Platform : MonoBehaviour {
 	}
 
 	void FixedUpdate () {
-		MoveAlongPath ();
-	}
-
-	void MoveAlongPath () {
-		if (pathIterator == null || pathIterator.Current == null)
-			return;
-
-		// get direction toward target
-		var target = pathIterator.Current.position;
-		var direction = target - transform.position;
-		direction.Normalize ();
-		 
-		// move toward target
-		var moveDelta = speed * Time.fixedDeltaTime;
-		transform.position += direction * moveDelta;
-
-		// check if we arrived at current target
-		if ((transform.position - target).sqrMagnitude < moveDelta*moveDelta) {
-			NextWaypoint ();
+		if (!waiting) {
+			MoveAlongPath ();
 		}
 	}
 
-	void NextWaypoint() {
+	void MoveAlongPath () {
+		if (!IsValid)
+			return;
+
+		// get direction toward target
+		var direction = DistanceToTarget;
+		direction.Normalize ();
+		 
+		// move toward target
+		transform.position += direction * DeltaPerTick;
+
+		// check if we arrived at current target
+		if (HasArrived) {
+			Invoke ("NextWaypoint", waitAtNodeTime);
+			waiting = true;
+		}
+	}
+
+	void NextWaypoint () {
+		waiting = false;
+
 		// start moving toward next waypoint!
 		pathIterator.MoveNext ();
+
 
 		// check if we arrived at final waypoint
 		if (pathIterator.Current == null) {
@@ -72,7 +111,9 @@ public class Platform : MonoBehaviour {
 					break;
 				case NavPath.RepeatMode.Mirror:
 					// reverse direction and walk back
-					direction = direction == NavPath.FollowDirection.Forward ? NavPath.FollowDirection.Backward : NavPath.FollowDirection.Forward;
+					direction = direction == NavPath.FollowDirection.Forward ? 
+						NavPath.FollowDirection.Backward :
+						NavPath.FollowDirection.Forward;
 					RestartPath ();
 					MoveAlongPath ();
 					break;
@@ -86,29 +127,20 @@ public class Platform : MonoBehaviour {
 	}
 
 
-	void OnCollisionEnter(Collision other) {
+	void OnCollisionEnter (Collision other) {
 		var feet = other.gameObject.GetComponent<Feet> ();
 		if (feet) {
-			// get root object, and add as child to platform
-			var root = feet.transform.GetRootTransform ();
-			root.parent = transform;
+			// add the object that owns the feet as child to platform
+			feet.owner.parent = transform;
 		}
 	}
 
-	void OnCollisionExit(Collision other) {
-		// check if object is child of platform
+	void OnCollisionExit (Collision other) {
 		var last = other.transform;
-		var current = other.transform.parent;
-
-		while (current != null) {
-			var platform = current.GetComponent<Platform> ();
-			if (platform == this) {
-				// break lose from platform
-				last.parent = null;
-				break;
-			}
-			last = current;
-			current = current.parent;
+		var feet = other.gameObject.GetComponent<Feet> ();
+		if (feet) {
+			// remove object from platform
+			feet.owner.parent = null;
 		}
 	}
 }
