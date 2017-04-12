@@ -104,25 +104,29 @@ public class Platform : MonoBehaviour {
 
 		// check if we arrived at final waypoint
 		if (pathIterator.Current == null) {
-			// finished path once
-			switch (mode) {
-				case NavPath.RepeatMode.Once:	
-					// done!
-					break;
-				case NavPath.RepeatMode.Mirror:
-					// reverse direction and walk back
-					direction = direction == NavPath.FollowDirection.Forward ? 
-						NavPath.FollowDirection.Backward :
-						NavPath.FollowDirection.Forward;
-					RestartPath ();
-					MoveAlongPath ();
-					break;
-				case NavPath.RepeatMode.Repeat:
-					// start from the beginning
-					RestartPath ();
-					MoveAlongPath ();
-					break;
-			}
+			OnPathFinished ();
+		}
+	}
+
+	void OnPathFinished() {
+		// finished path once
+		switch (mode) {
+			case NavPath.RepeatMode.Once:	
+				// done!
+				break;
+			case NavPath.RepeatMode.Mirror:
+				// reverse direction and walk back
+				direction = direction == NavPath.FollowDirection.Forward ? 
+					NavPath.FollowDirection.Backward :
+					NavPath.FollowDirection.Forward;
+				RestartPath ();
+				MoveAlongPath ();
+				break;
+			case NavPath.RepeatMode.Repeat:
+				// start from the beginning
+				RestartPath ();
+				MoveAlongPath ();
+				break;
 		}
 	}
 
