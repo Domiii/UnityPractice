@@ -82,7 +82,7 @@ public static class Extensions {
 	/// </summary>
 	/// <returns>The first descendant by name.</returns>
 	public static C FindFirstDescendantByName<C> (this Transform target, String name) {
-		var child = target.FindChild (name);
+		var child = target.Find (name);
 		if (child != null) {
 			var component = child.GetComponent<C> ();
 			if (component != null) {
@@ -105,7 +105,7 @@ public static class Extensions {
 	/// </summary>
 	/// <returns>The first descendant by name.</returns>
 	public static Transform FindFirstDescendantByName (this Transform target, String name) {
-		var child = target.FindChild (name);
+		var child = target.Find (name);
 		if (child != null) {
 			return child;
 		}
